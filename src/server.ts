@@ -1,5 +1,6 @@
 import express from 'express';
 import cookieParser from 'cookie-parser';
+import { maskSecret, readSecrets, writeSecrets } from './secrets-store';
 
 const AUTH_COOKIE_NAME = 'kiwy_hq_auth';
 
@@ -197,36 +198,59 @@ export function createApp() {
     res.type('html').send(pageLayout({ title: 'Dashboard', active: 'dashboard', contentHtml }));
   });
 
-  app.get('/secrets', (_req, res) => {
-    // Storage is implemented in a later story. This page must not render any stored values.
+  app.get('/secrets', async (req, res) => {
+    const saved = req.query?.saved === '1';
+    const stored = await readSecrets();
+    const appsheetPreview = stored?.appsheetKey ? maskSecret(stored.appsheetKey) : 'Not set';
+    const n8nPreview = stored?.n8nKey ? maskSecret(stored.n8nKey) : 'Not set';
+
     const contentHtml = `
       <h2 style="margin: 0 0 10px;">Secrets</h2>
-      <p style="margin: 0 0 14px; color: var(--muted);">Store API keys locally (not displayed). Coming in the next story.</p>
+      <p style="margin: 0 0 14px; color: var(--muted);">Stored locally in <code>data/secrets.json</code> (gitignored). File permissions are set to <code>600</code> (best-effort).</p>
+      ${saved ? '<p style="margin: 0 0 14px; color: var(--kiwy2);">Saved.</p>' : ''}
 
-      <div class="grid">
-        <section class="card" style="grid-column: span 12;">
-          <h2>AppSheet API key</h2>
-          <p>Saved locally; never rendered back into the page.</p>
-          <label>
-            <span class="tag" style="display:block; margin-bottom: 6px;">AppSheet key</span>
-            <input type="password" name="appsheet" value="" placeholder="••••••••" disabled
-              style="width:100%; padding:10px; border-radius: 12px; border: 1px solid var(--border); background: rgba(11,16,32,.25); color: var(--text);" />
-          </label>
-        </section>
+      <form method="post" action="/secrets">
+        <div class="grid">
+          <section class="card" style="grid-column: span 12;">
+            <h2>AppSheet API key</h2>
+            <p>Current: <code>${escapeHtml(appsheetPreview)}</code></p>
+            <label>
+              <span class="tag" style="display:block; margin-bottom: 6px;">New AppSheet key (leave blank to keep)</span>
+              <input type="password" name="appsheetKey" value="" placeholder="••••••••"
+                style="width:100%; padding:10px; border-radius: 12px; border: 1px solid var(--border); background: rgba(11,16,32,.25); color: var(--text);" />
+            </label>
+          </section>
 
-        <section class="card" style="grid-column: span 12;">
-          <h2>n8n API key</h2>
-          <p>Saved locally; never rendered back into the page.</p>
-          <label>
-            <span class="tag" style="display:block; margin-bottom: 6px;">n8n key</span>
-            <input type="password" name="n8n" value="" placeholder="••••••••" disabled
-              style="width:100%; padding:10px; border-radius: 12px; border: 1px solid var(--border); background: rgba(11,16,32,.25); color: var(--text);" />
-          </label>
-        </section>
-      </div>
+          <section class="card" style="grid-column: span 12;">
+            <h2>n8n API key</h2>
+            <p>Current: <code>${escapeHtml(n8nPreview)}</code></p>
+            <label>
+              <span class="tag" style="display:block; margin-bottom: 6px;">New n8n key (leave blank to keep)</span>
+              <input type="password" name="n8nKey" value="" placeholder="••••••••"
+                style="width:100%; padding:10px; border-radius: 12px; border: 1px solid var(--border); background: rgba(11,16,32,.25); color: var(--text);" />
+            </label>
+          </section>
+
+          <section class="card" style="grid-column: span 12; display:flex; justify-content:flex-end; gap: 10px;">
+            <button class="navlink" type="submit">Save</button>
+          </section>
+        </div>
+      </form>
     `;
 
     res.type('html').send(pageLayout({ title: 'Secrets', active: 'secrets', contentHtml }));
+  });
+
+  app.post('/secrets', async (req, res) => {
+    const appsheet = typeof req.body?.appsheetKey === 'string' ? req.body.appsheetKey.trim() : '';
+    const n8n = typeof req.body?.n8nKey === 'string' ? req.body.n8nKey.trim() : '';
+
+    await writeSecrets({
+      appsheetKey: appsheet.length > 0 ? appsheet : undefined,
+      n8nKey: n8n.length > 0 ? n8n : undefined,
+    });
+
+    return res.redirect(302, '/secrets?saved=1');
   });
 
   app.get('/login', (_req, res) => {
