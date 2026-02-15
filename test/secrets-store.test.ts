@@ -45,7 +45,7 @@ function request(
   );
 }
 
-test('POST /secrets writes data/secrets.json with chmod 600 and UI only shows masked values', async () => {
+test('POST /secrets writes data/secrets.json with chmod 600 and UI never shows raw secrets', async () => {
   const tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), 'kiwy-hq-'));
   const secretsPath = path.join(tmpDir, 'secrets.json');
 
@@ -78,6 +78,9 @@ test('POST /secrets writes data/secrets.json with chmod 600 and UI only shows ma
   assert.match(raw, /"appsheetKey"/);
   assert.match(raw, /"n8nKey"/);
   assert.match(raw, /"updatedAt"/);
+  assert.match(raw, /"fieldUpdatedAt"/);
+  assert.match(raw, /"appsheetKey"/);
+  assert.match(raw, /"n8nKey"/);
   assert.match(raw, new RegExp(appsheetKey.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
   assert.match(raw, new RegExp(n8nKey.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
 
@@ -100,9 +103,6 @@ test('POST /secrets writes data/secrets.json with chmod 600 and UI only shows ma
   assert.doesNotMatch(getRes.body, new RegExp(appsheetKey.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
   assert.doesNotMatch(getRes.body, new RegExp(n8nKey.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
 
-  // Masked previews are rendered.
-  const appsheetMask = `${appsheetKey.slice(0, 4)}...${appsheetKey.slice(-4)}`;
-  const n8nMask = `${n8nKey.slice(0, 4)}...${n8nKey.slice(-4)}`;
-  assert.match(getRes.body, new RegExp(appsheetMask.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
-  assert.match(getRes.body, new RegExp(n8nMask.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
+  // UI shows set status but never the secret itself (masked or raw).
+  assert.match(getRes.body, /Set/);
 });

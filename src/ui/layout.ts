@@ -96,6 +96,64 @@ export function pageLayout(opts: { title: string; active: NavKey; contentHtml: s
       }
       .pill small { color: var(--muted); font-size: 12px; }
       .fineprint { margin-top: 18px; color: var(--muted); font-size: 12px; }
+
+      /* Secrets page UX */
+      .sectionTitle { display:flex; align-items:center; justify-content:space-between; gap: 10px; margin: 0 0 10px; }
+      .sectionTitle h2 { margin: 0; font-size: 14px; }
+      .statusPill {
+        display:inline-flex; align-items:center; gap:6px;
+        padding: 4px 8px;
+        border-radius: 999px;
+        border: 1px solid var(--border);
+        background: rgba(11,16,32,.25);
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .statusDot { width: 8px; height: 8px; border-radius: 99px; background: rgba(168,176,217,.45); box-shadow: 0 0 0 2px rgba(168,176,217,.12); }
+      .statusDot.on { background: rgba(52,211,153,.9); box-shadow: 0 0 0 2px rgba(52,211,153,.18), 0 0 18px rgba(52,211,153,.22); }
+      .formHint { color: var(--muted); font-size: 12px; margin: 0 0 10px; }
+      .field { display:flex; flex-direction:column; gap: 6px; margin-top: 10px; }
+      .fieldRow { display:flex; align-items:center; justify-content:space-between; gap: 10px; }
+      .fieldLabel { font-size: 12px; color: var(--muted); }
+      .input {
+        width:100%; padding:10px; border-radius: 12px;
+        border: 1px solid var(--border);
+        background: rgba(11,16,32,.25);
+        color: var(--text);
+        outline: none;
+      }
+      .input:focus { border-color: rgba(124,92,255,.55); box-shadow: 0 0 0 3px rgba(124,92,255,.18); }
+      .danger { border-color: rgba(244,63,94,.35) !important; }
+      .stickyBar {
+        position: sticky;
+        bottom: 10px;
+        margin-top: 14px;
+        padding: 10px;
+        border-radius: 14px;
+        border: 1px solid var(--border);
+        background: rgba(18,26,51,.72);
+        backdrop-filter: blur(10px);
+        display:flex;
+        justify-content:flex-end;
+        gap: 10px;
+      }
+      .toast {
+        position: fixed;
+        right: 18px;
+        bottom: 18px;
+        z-index: 999;
+        padding: 10px 12px;
+        border-radius: 14px;
+        border: 1px solid rgba(52,211,153,.35);
+        background: rgba(11,16,32,.65);
+        backdrop-filter: blur(10px);
+        color: var(--text);
+        box-shadow: 0 12px 36px rgba(0,0,0,.35);
+        max-width: min(520px, calc(100vw - 36px));
+      }
+      .toast small { color: var(--muted); display:block; margin-top: 2px; }
+      .hidden { display:none; }
+
       @media (max-width: 720px) { .card { grid-column: span 12; } }
     </style>
   </head>

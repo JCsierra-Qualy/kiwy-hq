@@ -1,6 +1,6 @@
 import express from 'express';
 import cookieParser from 'cookie-parser';
-import { maskSecret, readSecrets, writeSecrets } from './secrets-store';
+import { readSecrets, writeSecrets } from './secrets-store';
 import { escapeHtml, pageLayout } from './ui';
 
 const AUTH_COOKIE_NAME = 'kiwy_hq_auth';
@@ -72,68 +72,189 @@ export function createApp() {
   app.get('/secrets', async (req, res) => {
     const saved = req.query?.saved === '1';
     const stored = await readSecrets();
-    const appsheetPreview = stored?.appsheetKey ? maskSecret(stored.appsheetKey) : 'Not set';
-    const n8nPreview = stored?.n8nKey ? maskSecret(stored.n8nKey) : 'Not set';
-    const githubPreview = stored?.githubPat ? maskSecret(stored.githubPat) : 'Not set';
+
+    const fieldUpdatedAt = (field: keyof NonNullable<typeof stored>['fieldUpdatedAt']) => {
+      const ts = stored?.fieldUpdatedAt?.[field as any] || stored?.updatedAt;
+      return typeof ts === 'string' ? ts : '';
+    };
+
+    const isSet = (value: unknown) => typeof value === 'string' && value.trim().length > 0;
+
+    const statusPill = (on: boolean, updatedAtIso: string | undefined) => {
+      const dot = `<span class="statusDot ${on ? 'on' : ''}" aria-hidden="true"></span>`;
+      const label = on ? 'Set' : 'Not set';
+      const when = updatedAtIso ? ` · ${escapeHtml(updatedAtIso)}` : '';
+      return `<span class="statusPill">${dot}<span>${label}${when}</span></span>`;
+    };
 
     const contentHtml = `
-      <h2 style="margin: 0 0 10px;">Secrets</h2>
-      <p style="margin: 0 0 14px; color: var(--muted);">Stored locally in <code>data/secrets.json</code> (gitignored). File permissions are set to <code>600</code> (best-effort).</p>
-      ${saved ? '<p style="margin: 0 0 14px; color: var(--kiwy2);">Saved.</p>' : ''}
+      <h2 style="margin: 0 0 10px;">Secrets & Config</h2>
+      <p class="formHint">Stored locally in <code>data/secrets.json</code> (gitignored). We never render raw secrets in HTML. <strong>Leaving a field blank keeps the existing value.</strong></p>
+
+      <div id="toast" class="toast hidden" role="status" aria-live="polite">
+        Saved.
+        <small>Changes written to <code>data/secrets.json</code>.</small>
+      </div>
 
       <form method="post" action="/secrets">
         <div class="grid">
           <section class="card" style="grid-column: span 12;">
-            <h2>AppSheet API key</h2>
-            <p>Current: <code>${escapeHtml(appsheetPreview)}</code></p>
-            <label>
-              <span class="tag" style="display:block; margin-bottom: 6px;">New AppSheet key (leave blank to keep)</span>
-              <input type="password" name="appsheetKey" value="" placeholder="••••••••"
-                style="width:100%; padding:10px; border-radius: 12px; border: 1px solid var(--border); background: rgba(11,16,32,.25); color: var(--text);" />
-            </label>
+            <div class="sectionTitle">
+              <h2>AppSheet CRM</h2>
+              ${statusPill(isSet(stored?.appsheetCrmKey) && isSet(stored?.appsheetAppId), stored?.updatedAt)}
+            </div>
+            <p class="formHint">Key + App ID used by CRM automations. Leave blank to keep; use the clear checkbox to intentionally remove.</p>
+
+            <div class="field">
+              <div class="fieldRow">
+                <span class="fieldLabel">App ID (CRM)</span>
+                ${statusPill(isSet(stored?.appsheetAppId), fieldUpdatedAt('appsheetAppId' as any))}
+              </div>
+              <input class="input" type="text" name="appsheetAppId" value="" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" />
+              <label class="fieldLabel"><input type="checkbox" name="clear_appsheetAppId" value="1" /> Clear stored App ID</label>
+            </div>
+
+            <div class="field">
+              <div class="fieldRow">
+                <span class="fieldLabel">API key (CRM)</span>
+                ${statusPill(isSet(stored?.appsheetCrmKey), fieldUpdatedAt('appsheetCrmKey' as any))}
+              </div>
+              <input class="input" type="password" name="appsheetCrmKey" value="" placeholder="V2-…" autocomplete="new-password" />
+              <label class="fieldLabel"><input type="checkbox" name="clear_appsheetCrmKey" value="1" /> Clear stored CRM key</label>
+            </div>
           </section>
 
           <section class="card" style="grid-column: span 12;">
-            <h2>n8n API key</h2>
-            <p>Current: <code>${escapeHtml(n8nPreview)}</code></p>
-            <label>
-              <span class="tag" style="display:block; margin-bottom: 6px;">New n8n key (leave blank to keep)</span>
-              <input type="password" name="n8nKey" value="" placeholder="••••••••"
-                style="width:100%; padding:10px; border-radius: 12px; border: 1px solid var(--border); background: rgba(11,16,32,.25); color: var(--text);" />
-            </label>
+            <div class="sectionTitle">
+              <h2>AppSheet Ops</h2>
+              ${statusPill(isSet(stored?.appsheetOpsKey), fieldUpdatedAt('appsheetOpsKey' as any))}
+            </div>
+            <p class="formHint">Ops/Tasks workflows key.</p>
+
+            <div class="field">
+              <div class="fieldRow">
+                <span class="fieldLabel">API key (Ops)</span>
+                ${statusPill(isSet(stored?.appsheetOpsKey), fieldUpdatedAt('appsheetOpsKey' as any))}
+              </div>
+              <input class="input" type="password" name="appsheetOpsKey" value="" placeholder="V2-…" autocomplete="new-password" />
+              <label class="fieldLabel"><input type="checkbox" name="clear_appsheetOpsKey" value="1" /> Clear stored Ops key</label>
+            </div>
           </section>
 
           <section class="card" style="grid-column: span 12;">
-            <h2>GitHub PAT (for PR automation)</h2>
-            <p>Current: <code>${escapeHtml(githubPreview)}</code></p>
-            <label>
-              <span class="tag" style="display:block; margin-bottom: 6px;">New GitHub PAT (leave blank to keep)</span>
-              <input type="password" name="githubPat" value="" placeholder="ghp_…"
-                style="width:100%; padding:10px; border-radius: 12px; border: 1px solid var(--border); background: rgba(11,16,32,.25); color: var(--text);" />
-            </label>
-            <p class="tag" style="margin-top:8px;">Needs: Fine-grained token with Pull requests: Read/Write on repo JCsierra-Qualy/kiwy-hq.</p>
+            <div class="sectionTitle">
+              <h2>AppSheet Shared</h2>
+              ${statusPill(true, stored?.updatedAt)}
+            </div>
+            <p class="formHint">Region domain is not a secret; legacy key is only for old scripts.</p>
+
+            <div class="field">
+              <div class="fieldRow">
+                <span class="fieldLabel">Region domain</span>
+                ${statusPill(isSet(stored?.appsheetRegion), fieldUpdatedAt('appsheetRegion' as any))}
+              </div>
+              <input class="input" type="text" name="appsheetRegion" value="" placeholder="www.appsheet.com / eu.appsheet.com / asia-southeast.appsheet.com" />
+              <label class="fieldLabel"><input type="checkbox" name="clear_appsheetRegion" value="1" /> Clear stored region</label>
+            </div>
+
+            <div class="field">
+              <div class="fieldRow">
+                <span class="fieldLabel">Legacy key (single)</span>
+                ${statusPill(isSet(stored?.appsheetKey), fieldUpdatedAt('appsheetKey' as any))}
+              </div>
+              <input class="input" type="password" name="appsheetKey" value="" placeholder="V2-…" autocomplete="new-password" />
+              <label class="fieldLabel"><input type="checkbox" name="clear_appsheetKey" value="1" /> Clear stored legacy key</label>
+            </div>
           </section>
 
-          <section class="card" style="grid-column: span 12; display:flex; justify-content:flex-end; gap: 10px;">
-            <button class="navlink" type="submit">Save</button>
+          <section class="card" style="grid-column: span 12;">
+            <div class="sectionTitle">
+              <h2>n8n</h2>
+              ${statusPill(isSet(stored?.n8nKey), fieldUpdatedAt('n8nKey' as any))}
+            </div>
+            <p class="formHint">API key used for calling n8n endpoints.</p>
+
+            <div class="field">
+              <div class="fieldRow">
+                <span class="fieldLabel">n8n API key</span>
+                ${statusPill(isSet(stored?.n8nKey), fieldUpdatedAt('n8nKey' as any))}
+              </div>
+              <input class="input" type="password" name="n8nKey" value="" placeholder="••••••••" autocomplete="new-password" />
+              <label class="fieldLabel"><input type="checkbox" name="clear_n8nKey" value="1" /> Clear stored n8n key</label>
+            </div>
+          </section>
+
+          <section class="card" style="grid-column: span 12;">
+            <div class="sectionTitle">
+              <h2>GitHub</h2>
+              ${statusPill(isSet(stored?.githubPat), fieldUpdatedAt('githubPat' as any))}
+            </div>
+            <p class="formHint">Used for PR automation. Recommended: fine-grained token with Pull requests: Read/Write on repo <code>JCsierra-Qualy/kiwy-hq</code>.</p>
+
+            <div class="field">
+              <div class="fieldRow">
+                <span class="fieldLabel">GitHub PAT</span>
+                ${statusPill(isSet(stored?.githubPat), fieldUpdatedAt('githubPat' as any))}
+              </div>
+              <input class="input" type="password" name="githubPat" value="" placeholder="github_pat_… / ghp_…" autocomplete="new-password" />
+              <label class="fieldLabel"><input type="checkbox" name="clear_githubPat" value="1" /> Clear stored token</label>
+            </div>
+          </section>
+
+          <section class="card" style="grid-column: span 12; padding: 0; background: transparent; border: none;">
+            <div class="stickyBar">
+              <button class="navlink" type="submit">Save changes</button>
+            </div>
           </section>
         </div>
       </form>
+
+      <script>
+        (function () {
+          var saved = ${saved ? 'true' : 'false'};
+          if (!saved) return;
+          var toast = document.getElementById('toast');
+          if (!toast) return;
+          toast.classList.remove('hidden');
+          window.setTimeout(function () { toast.classList.add('hidden'); }, 2600);
+          try {
+            var url = new URL(window.location.href);
+            url.searchParams.delete('saved');
+            window.history.replaceState({}, document.title, url.toString());
+          } catch {}
+        })();
+      </script>
     `;
 
     res.type('html').send(pageLayout({ title: 'Secrets', active: 'secrets', contentHtml }));
   });
 
   app.post('/secrets', async (req, res) => {
-    const appsheet = typeof req.body?.appsheetKey === 'string' ? req.body.appsheetKey.trim() : '';
-    const n8n = typeof req.body?.n8nKey === 'string' ? req.body.n8nKey.trim() : '';
-    const githubPat = typeof req.body?.githubPat === 'string' ? req.body.githubPat.trim() : '';
+    const body = req.body || {};
 
-    await writeSecrets({
-      appsheetKey: appsheet.length > 0 ? appsheet : undefined,
-      n8nKey: n8n.length > 0 ? n8n : undefined,
-      githubPat: githubPat.length > 0 ? githubPat : undefined,
-    });
+    const getString = (name: string) => (typeof (body as any)[name] === 'string' ? String((body as any)[name]).trim() : '');
+    const isClear = (name: string) => (body as any)[`clear_${name}`] === '1' || (body as any)[`clear_${name}`] === 'on';
+
+    const update: any = {};
+
+    const setOrKeepOrClear = (field: string) => {
+      if (isClear(field)) {
+        update[field] = null;
+        return;
+      }
+      const v = getString(field);
+      if (v.length > 0) update[field] = v;
+    };
+
+    setOrKeepOrClear('appsheetAppId');
+    setOrKeepOrClear('appsheetCrmKey');
+    setOrKeepOrClear('appsheetOpsKey');
+    setOrKeepOrClear('appsheetRegion');
+    setOrKeepOrClear('appsheetKey');
+    setOrKeepOrClear('n8nKey');
+    setOrKeepOrClear('githubPat');
+
+    await writeSecrets(update);
 
     return res.redirect(302, '/secrets?saved=1');
   });
