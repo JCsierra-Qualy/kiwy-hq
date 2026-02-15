@@ -7,7 +7,7 @@ Started: 2026-02-15T17:07:00Z
 - Express app factory is `createApp()` in `src/server.ts`; tests import it and spin up an ephemeral port via `app.listen(0)`.
 - Tests use `node:test` with the built-in `http` client (no supertest) and run via `node --import tsx --test`.
 - Route protection is implemented via an `app.use()` middleware that redirects to `/login` when `kiwy_hq_auth` cookie is missing.
-- HTML pages are server-rendered via a shared `pageLayout()` helper in `src/server.ts` which sets `data-kiwy-shell="v1"` for easy test assertions.
+- HTML pages are server-rendered via a shared `pageLayout()` helper in `src/ui/layout.ts` (re-exported from `src/ui`) which sets `data-kiwy-shell="v1"` for easy test assertions.
 - Secrets are stored in a local JSON file via `src/secrets-store.ts`; tests can override the storage path with `KIWY_HQ_SECRETS_PATH`.
 
 ---
@@ -43,4 +43,12 @@ Started: 2026-02-15T17:07:00Z
 - Added tests covering POST persistence, file permissions, and that HTML never renders full secret values.
 - Files changed: `src/server.ts`, `src/secrets-store.ts`, `test/secrets-store.test.ts`
 - **Learnings:** Use `KIWY_HQ_SECRETS_PATH` to redirect secrets storage in tests.
+---
+
+## 2026-02-15T17:56:28Z - US-001: Modularize SSR HTML templates (shell/layout/components) without changing behavior
+- Extracted `escapeHtml()` and `pageLayout()` into `src/ui/layout.ts` and re-exported via `src/ui/index.ts`.
+- Updated `src/server.ts` to import UI helpers (no duplicated shell/layout logic in routes).
+- Added unit tests for template helpers to ensure HTML shell markers and escaping behavior are stable.
+- Files changed: `src/server.ts`, `src/ui/layout.ts`, `src/ui/index.ts`, `test/ui-layout.test.ts`
+- **Learnings:** Keep shell HTML output byte-for-byte identical when moving templates to avoid churn in integration tests; unit tests can validate stable markers and active nav rendering.
 ---
