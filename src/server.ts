@@ -3,18 +3,33 @@ import cookieParser from 'cookie-parser';
 
 const AUTH_COOKIE_NAME = 'kiwy_hq_auth';
 
+function authRequiredMiddleware(req: express.Request, res: express.Response, next: express.NextFunction) {
+  // Public endpoints
+  if (req.path === '/health' || req.path === '/login') return next();
+
+  const authed = req.cookies?.[AUTH_COOKIE_NAME] === '1';
+  if (authed) return next();
+
+  return res.redirect(302, '/login');
+}
+
 export function createApp() {
   const app = express();
 
   // Middleware
   app.use(cookieParser());
   app.use(express.urlencoded({ extended: false }));
+  app.use(authRequiredMiddleware);
 
   app.get('/health', (_req, res) => res.json({ ok: true }));
 
   app.get('/', (_req, res) => {
-    // Placeholder dashboard home. Protected routing is implemented in a later story.
     res.type('html').send('<h1>Kiwy HQ</h1>');
+  });
+
+  app.get('/secrets', (_req, res) => {
+    // Placeholder page (storage is implemented in a later story).
+    res.type('html').send('<h1>Secrets</h1>');
   });
 
   app.get('/login', (_req, res) => {

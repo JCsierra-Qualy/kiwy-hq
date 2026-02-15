@@ -126,6 +126,9 @@ test('POST /logout clears cookie', async () => {
   const res = await request(port, {
     method: 'POST',
     path: '/logout',
+    headers: {
+      cookie: 'kiwy_hq_auth=1',
+    },
   });
 
   server.close();
@@ -136,4 +139,53 @@ test('POST /logout clears cookie', async () => {
   const cookieStr = Array.isArray(setCookie) ? setCookie.join(';') : setCookie;
   assert.match(cookieStr, /kiwy_hq_auth=/);
   assert.match(cookieStr, /Expires=/i);
+});
+
+test('GET / redirects to /login when unauthenticated', async () => {
+  const app = createApp();
+  const server = app.listen(0);
+  const addr = server.address();
+  assert.equal(typeof addr, 'object');
+  const port = (addr as any).port as number;
+
+  const res = await request(port, { method: 'GET', path: '/' });
+  server.close();
+
+  assert.equal(res.statusCode, 302);
+  assert.equal(res.headers.location, '/login');
+});
+
+test('GET / allows access when authenticated', async () => {
+  const app = createApp();
+  const server = app.listen(0);
+  const addr = server.address();
+  assert.equal(typeof addr, 'object');
+  const port = (addr as any).port as number;
+
+  const res = await request(port, {
+    method: 'GET',
+    path: '/',
+    headers: {
+      cookie: 'kiwy_hq_auth=1',
+    },
+  });
+
+  server.close();
+
+  assert.equal(res.statusCode, 200);
+  assert.match(res.body, /Kiwy HQ/);
+});
+
+test('GET /secrets requires auth', async () => {
+  const app = createApp();
+  const server = app.listen(0);
+  const addr = server.address();
+  assert.equal(typeof addr, 'object');
+  const port = (addr as any).port as number;
+
+  const res = await request(port, { method: 'GET', path: '/secrets' });
+  server.close();
+
+  assert.equal(res.statusCode, 302);
+  assert.equal(res.headers.location, '/login');
 });

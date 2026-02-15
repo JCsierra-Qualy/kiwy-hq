@@ -6,6 +6,7 @@ Started: 2026-02-15T17:07:00Z
 ## Codebase Patterns
 - Express app factory is `createApp()` in `src/server.ts`; tests import it and spin up an ephemeral port via `app.listen(0)`.
 - Tests use `node:test` with the built-in `http` client (no supertest) and run via `node --import tsx --test`.
+- Route protection is implemented via an `app.use()` middleware that redirects to `/login` when `kiwy_hq_auth` cookie is missing.
 
 ---
 
@@ -15,4 +16,12 @@ Started: 2026-02-15T17:07:00Z
 - Added auth flow tests for login/logout.
 - Files changed: `src/server.ts`, `test/auth.test.ts`
 - **Learnings:** Keep request parsing enabled via `express.urlencoded()` for simple HTML form posts.
+---
+
+## 2026-02-15 - US-002: Auth: protect routes with middleware
+- Added `authRequiredMiddleware` to protect all routes except `/health` and `/login`; unauthenticated users are redirected to `/login`.
+- Added placeholder `/secrets` route (protected by middleware).
+- Updated logout test to include auth cookie.
+- Files changed: `src/server.ts`, `test/auth.test.ts`
+- **Learnings:** When using express + cookie-parser, `req.path` is a simple way to match public routes inside global auth middleware.
 ---
