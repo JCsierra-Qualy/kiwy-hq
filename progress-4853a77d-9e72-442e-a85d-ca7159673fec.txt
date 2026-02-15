@@ -1,0 +1,18 @@
+# Progress Log
+Run: 4853a77d-9e72-442e-a85d-ca7159673fec
+Task: Kiwy HQ MVP v1
+Started: 2026-02-15T17:07:00Z
+
+## Codebase Patterns
+- Express app factory is `createApp()` in `src/server.ts`; tests import it and spin up an ephemeral port via `app.listen(0)`.
+- Tests use `node:test` with the built-in `http` client (no supertest) and run via `node --import tsx --test`.
+
+---
+
+## 2026-02-15 - US-001: Auth: token login page + httpOnly cookie session
+- Added `/login` (GET HTML form + POST token validation against `KIWY_HQ_TOKEN`) and `/logout` (POST clears cookie).
+- Cookie session is stored in an httpOnly cookie (`kiwy_hq_auth`) with `SameSite=Lax`.
+- Added auth flow tests for login/logout.
+- Files changed: `src/server.ts`, `test/auth.test.ts`
+- **Learnings:** Keep request parsing enabled via `express.urlencoded()` for simple HTML form posts.
+---
