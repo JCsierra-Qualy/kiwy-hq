@@ -1,6 +1,6 @@
 import express from 'express';
 import cookieParser from 'cookie-parser';
-import { readSecrets, writeSecrets } from './secrets-store';
+import { readSecrets, writeSecrets, type SecretsField } from './secrets-store';
 import { escapeHtml, pageLayout } from './ui';
 
 const AUTH_COOKIE_NAME = 'kiwy_hq_auth';
@@ -73,8 +73,8 @@ export function createApp() {
     const saved = req.query?.saved === '1';
     const stored = await readSecrets();
 
-    const fieldUpdatedAt = (field: keyof NonNullable<typeof stored>['fieldUpdatedAt']) => {
-      const ts = stored?.fieldUpdatedAt?.[field as any] || stored?.updatedAt;
+    const fieldUpdatedAt = (field: SecretsField) => {
+      const ts = stored?.fieldUpdatedAt?.[field] || stored?.updatedAt;
       return typeof ts === 'string' ? ts : '';
     };
 
@@ -108,7 +108,7 @@ export function createApp() {
             <div class="field">
               <div class="fieldRow">
                 <span class="fieldLabel">App ID (CRM)</span>
-                ${statusPill(isSet(stored?.appsheetAppId), fieldUpdatedAt('appsheetAppId' as any))}
+                ${statusPill(isSet(stored?.appsheetAppId), fieldUpdatedAt('appsheetAppId'))}
               </div>
               <input class="input" type="text" name="appsheetAppId" value="" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" />
               <label class="fieldLabel"><input type="checkbox" name="clear_appsheetAppId" value="1" /> Clear stored App ID</label>
@@ -117,7 +117,7 @@ export function createApp() {
             <div class="field">
               <div class="fieldRow">
                 <span class="fieldLabel">API key (CRM)</span>
-                ${statusPill(isSet(stored?.appsheetCrmKey), fieldUpdatedAt('appsheetCrmKey' as any))}
+                ${statusPill(isSet(stored?.appsheetCrmKey), fieldUpdatedAt('appsheetCrmKey'))}
               </div>
               <input class="input" type="password" name="appsheetCrmKey" value="" placeholder="V2-…" autocomplete="new-password" />
               <label class="fieldLabel"><input type="checkbox" name="clear_appsheetCrmKey" value="1" /> Clear stored CRM key</label>
@@ -127,14 +127,14 @@ export function createApp() {
           <section class="card" style="grid-column: span 12;">
             <div class="sectionTitle">
               <h2>AppSheet Ops</h2>
-              ${statusPill(isSet(stored?.appsheetOpsKey), fieldUpdatedAt('appsheetOpsKey' as any))}
+              ${statusPill(isSet(stored?.appsheetOpsKey), fieldUpdatedAt('appsheetOpsKey'))}
             </div>
             <p class="formHint">Ops/Tasks workflows key.</p>
 
             <div class="field">
               <div class="fieldRow">
                 <span class="fieldLabel">API key (Ops)</span>
-                ${statusPill(isSet(stored?.appsheetOpsKey), fieldUpdatedAt('appsheetOpsKey' as any))}
+                ${statusPill(isSet(stored?.appsheetOpsKey), fieldUpdatedAt('appsheetOpsKey'))}
               </div>
               <input class="input" type="password" name="appsheetOpsKey" value="" placeholder="V2-…" autocomplete="new-password" />
               <label class="fieldLabel"><input type="checkbox" name="clear_appsheetOpsKey" value="1" /> Clear stored Ops key</label>
@@ -151,7 +151,7 @@ export function createApp() {
             <div class="field">
               <div class="fieldRow">
                 <span class="fieldLabel">Region domain</span>
-                ${statusPill(isSet(stored?.appsheetRegion), fieldUpdatedAt('appsheetRegion' as any))}
+                ${statusPill(isSet(stored?.appsheetRegion), fieldUpdatedAt('appsheetRegion'))}
               </div>
               <input class="input" type="text" name="appsheetRegion" value="" placeholder="www.appsheet.com / eu.appsheet.com / asia-southeast.appsheet.com" />
               <label class="fieldLabel"><input type="checkbox" name="clear_appsheetRegion" value="1" /> Clear stored region</label>
@@ -160,7 +160,7 @@ export function createApp() {
             <div class="field">
               <div class="fieldRow">
                 <span class="fieldLabel">Legacy key (single)</span>
-                ${statusPill(isSet(stored?.appsheetKey), fieldUpdatedAt('appsheetKey' as any))}
+                ${statusPill(isSet(stored?.appsheetKey), fieldUpdatedAt('appsheetKey'))}
               </div>
               <input class="input" type="password" name="appsheetKey" value="" placeholder="V2-…" autocomplete="new-password" />
               <label class="fieldLabel"><input type="checkbox" name="clear_appsheetKey" value="1" /> Clear stored legacy key</label>
@@ -170,14 +170,14 @@ export function createApp() {
           <section class="card" style="grid-column: span 12;">
             <div class="sectionTitle">
               <h2>n8n</h2>
-              ${statusPill(isSet(stored?.n8nKey), fieldUpdatedAt('n8nKey' as any))}
+              ${statusPill(isSet(stored?.n8nKey), fieldUpdatedAt('n8nKey'))}
             </div>
             <p class="formHint">API key used for calling n8n endpoints.</p>
 
             <div class="field">
               <div class="fieldRow">
                 <span class="fieldLabel">n8n API key</span>
-                ${statusPill(isSet(stored?.n8nKey), fieldUpdatedAt('n8nKey' as any))}
+                ${statusPill(isSet(stored?.n8nKey), fieldUpdatedAt('n8nKey'))}
               </div>
               <input class="input" type="password" name="n8nKey" value="" placeholder="••••••••" autocomplete="new-password" />
               <label class="fieldLabel"><input type="checkbox" name="clear_n8nKey" value="1" /> Clear stored n8n key</label>
@@ -187,14 +187,14 @@ export function createApp() {
           <section class="card" style="grid-column: span 12;">
             <div class="sectionTitle">
               <h2>GitHub</h2>
-              ${statusPill(isSet(stored?.githubPat), fieldUpdatedAt('githubPat' as any))}
+              ${statusPill(isSet(stored?.githubPat), fieldUpdatedAt('githubPat'))}
             </div>
             <p class="formHint">Used for PR automation. Recommended: fine-grained token with Pull requests: Read/Write on repo <code>JCsierra-Qualy/kiwy-hq</code>.</p>
 
             <div class="field">
               <div class="fieldRow">
                 <span class="fieldLabel">GitHub PAT</span>
-                ${statusPill(isSet(stored?.githubPat), fieldUpdatedAt('githubPat' as any))}
+                ${statusPill(isSet(stored?.githubPat), fieldUpdatedAt('githubPat'))}
               </div>
               <input class="input" type="password" name="githubPat" value="" placeholder="github_pat_… / ghp_…" autocomplete="new-password" />
               <label class="fieldLabel"><input type="checkbox" name="clear_githubPat" value="1" /> Clear stored token</label>
@@ -235,9 +235,9 @@ export function createApp() {
     const getString = (name: string) => (typeof (body as any)[name] === 'string' ? String((body as any)[name]).trim() : '');
     const isClear = (name: string) => (body as any)[`clear_${name}`] === '1' || (body as any)[`clear_${name}`] === 'on';
 
-    const update: any = {};
+    const update: Partial<Record<SecretsField, string | null>> = {};
 
-    const setOrKeepOrClear = (field: string) => {
+    const setOrKeepOrClear = (field: SecretsField) => {
       if (isClear(field)) {
         update[field] = null;
         return;
