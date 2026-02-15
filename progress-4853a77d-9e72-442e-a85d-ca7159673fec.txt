@@ -8,6 +8,7 @@ Started: 2026-02-15T17:07:00Z
 - Tests use `node:test` with the built-in `http` client (no supertest) and run via `node --import tsx --test`.
 - Route protection is implemented via an `app.use()` middleware that redirects to `/login` when `kiwy_hq_auth` cookie is missing.
 - HTML pages are server-rendered via a shared `pageLayout()` helper in `src/server.ts` which sets `data-kiwy-shell="v1"` for easy test assertions.
+- Secrets are stored in a local JSON file via `src/secrets-store.ts`; tests can override the storage path with `KIWY_HQ_SECRETS_PATH`.
 
 ---
 
@@ -34,4 +35,12 @@ Started: 2026-02-15T17:07:00Z
 - Added HTML rendering tests to confirm shared layout, nav links, and that secrets are not printed.
 - Files changed: `src/server.ts`, `test/ui-shell.test.ts`
 - **Learnings:** Add a stable marker attribute (`data-kiwy-shell`) to make HTML rendering tests resilient to copy changes.
+---
+
+## 2026-02-15T17:43:43Z - US-004: Secrets: local file store with chmod 600 + masked display
+- Implemented secrets local file store at `data/secrets.json` (gitignored) with best-effort `chmod 600` and atomic write.
+- Updated `/secrets` UI to show masked previews only (`first4...last4`) and added POST handler to write/update secrets.
+- Added tests covering POST persistence, file permissions, and that HTML never renders full secret values.
+- Files changed: `src/server.ts`, `src/secrets-store.ts`, `test/secrets-store.test.ts`
+- **Learnings:** Use `KIWY_HQ_SECRETS_PATH` to redirect secrets storage in tests.
 ---
