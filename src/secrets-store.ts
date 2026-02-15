@@ -4,6 +4,7 @@ import path from 'node:path';
 export type StoredSecrets = {
   appsheetKey?: string;
   n8nKey?: string;
+  githubPat?: string;
   updatedAt: string;
 };
 
@@ -24,6 +25,7 @@ export async function readSecrets(filePath = getSecretsFilePath()): Promise<Stor
 
     if (typeof obj.appsheetKey === 'string') stored.appsheetKey = obj.appsheetKey;
     if (typeof obj.n8nKey === 'string') stored.n8nKey = obj.n8nKey;
+    if (typeof obj.githubPat === 'string') stored.githubPat = obj.githubPat;
 
     return stored;
   } catch (err: unknown) {
@@ -34,7 +36,7 @@ export async function readSecrets(filePath = getSecretsFilePath()): Promise<Stor
 }
 
 export async function writeSecrets(
-  update: { appsheetKey?: string; n8nKey?: string },
+  update: { appsheetKey?: string; n8nKey?: string; githubPat?: string },
   filePath = getSecretsFilePath(),
 ) {
   const existing = (await readSecrets(filePath)) || { updatedAt: new Date(0).toISOString() };
@@ -43,6 +45,7 @@ export async function writeSecrets(
     updatedAt: new Date().toISOString(),
     appsheetKey: typeof update.appsheetKey === 'string' ? update.appsheetKey : existing.appsheetKey,
     n8nKey: typeof update.n8nKey === 'string' ? update.n8nKey : existing.n8nKey,
+    githubPat: typeof update.githubPat === 'string' ? update.githubPat : existing.githubPat,
   };
 
   await fs.mkdir(path.dirname(filePath), { recursive: true });

@@ -74,6 +74,7 @@ export function createApp() {
     const stored = await readSecrets();
     const appsheetPreview = stored?.appsheetKey ? maskSecret(stored.appsheetKey) : 'Not set';
     const n8nPreview = stored?.n8nKey ? maskSecret(stored.n8nKey) : 'Not set';
+    const githubPreview = stored?.githubPat ? maskSecret(stored.githubPat) : 'Not set';
 
     const contentHtml = `
       <h2 style="margin: 0 0 10px;">Secrets</h2>
@@ -102,6 +103,17 @@ export function createApp() {
             </label>
           </section>
 
+          <section class="card" style="grid-column: span 12;">
+            <h2>GitHub PAT (for PR automation)</h2>
+            <p>Current: <code>${escapeHtml(githubPreview)}</code></p>
+            <label>
+              <span class="tag" style="display:block; margin-bottom: 6px;">New GitHub PAT (leave blank to keep)</span>
+              <input type="password" name="githubPat" value="" placeholder="ghp_…"
+                style="width:100%; padding:10px; border-radius: 12px; border: 1px solid var(--border); background: rgba(11,16,32,.25); color: var(--text);" />
+            </label>
+            <p class="tag" style="margin-top:8px;">Needs: Fine-grained token with Pull requests: Read/Write on repo JCsierra-Qualy/kiwy-hq.</p>
+          </section>
+
           <section class="card" style="grid-column: span 12; display:flex; justify-content:flex-end; gap: 10px;">
             <button class="navlink" type="submit">Save</button>
           </section>
@@ -115,10 +127,12 @@ export function createApp() {
   app.post('/secrets', async (req, res) => {
     const appsheet = typeof req.body?.appsheetKey === 'string' ? req.body.appsheetKey.trim() : '';
     const n8n = typeof req.body?.n8nKey === 'string' ? req.body.n8nKey.trim() : '';
+    const githubPat = typeof req.body?.githubPat === 'string' ? req.body.githubPat.trim() : '';
 
     await writeSecrets({
       appsheetKey: appsheet.length > 0 ? appsheet : undefined,
       n8nKey: n8n.length > 0 ? n8n : undefined,
+      githubPat: githubPat.length > 0 ? githubPat : undefined,
     });
 
     return res.redirect(302, '/secrets?saved=1');
