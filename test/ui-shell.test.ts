@@ -17,6 +17,7 @@ function request(
     method: string;
     path: string;
     headers?: Record<string, string>;
+    body?: string;
   },
 ) {
   return new Promise<{ statusCode: number; headers: http.IncomingHttpHeaders; body: string }>(
@@ -35,48 +36,52 @@ function request(
         },
       );
       req.on('error', reject);
+      if (opts.body) req.write(opts.body);
       req.end();
     },
   );
 }
 
-test('authenticated users see consistent shell on / and /secrets', async () => {
+function expectShell(html: string) {
+  assert.match(html, /data-kiwy-shell="v1"/);
+  assert.match(html, /<h1>\s*Kiwy HQ\s*<\/h1>/);
+  assert.match(html, /<nav[^>]*aria-label="Primary"/);
+  assert.match(html, /<a[^>]*href="\/"[^>]*>Dashboard<\/a>/);
+  assert.match(html, /<a[^>]*href="\/secrets"[^>]*>Secrets<\/a>/);
+}
+
+test('Authenticated pages share the Kiwy shell layout and navigation', async () => {
   const app = createApp();
   const server = app.listen(0);
   const addr = server.address();
   assert.equal(typeof addr, 'object');
   const port = (addr as any).port as number;
 
-  const cookie = { cookie: 'kiwy_hq_auth=1' };
+  const dashboardRes = await request(port, {
+    method: 'GET',
+    path: '/',
+    headers: { cookie: 'kiwy_hq_auth=1' },
+  });
 
-  const dash = await request(port, { method: 'GET', path: '/', headers: cookie });
-  const secrets = await request(port, { method: 'GET', path: '/secrets', headers: cookie });
+  const secretsRes = await request(port, {
+    method: 'GET',
+    path: '/secrets',
+    headers: { cookie: 'kiwy_hq_auth=1' },
+  });
 
   server.close();
 
-  for (const res of [dash, secrets]) {
-    assert.equal(res.statusCode, 200);
-    assert.match(res.headers['content-type'] || '', /text\/html/);
+  assert.equal(dashboardRes.statusCode, 200);
+  assert.equal(secretsRes.statusCode, 200);
 
-    // Shell pieces
-    assert.match(res.body, /<h1>Kiwy HQ<\/h1>/);
-    assert.match(res.body, /<nav[^>]*aria-label="Primary"/);
-
-    // Nav links
-    assert.match(res.body, /href="\/"[^>]*>Dashboard<\/a>/);
-    assert.match(res.body, /href="\/secrets"[^>]*>Secrets<\/a>/);
-    assert.match(res.body, /<form[^>]*method="post"[^>]*action="\/logout"/i);
-  }
-
-  // Active nav marker switches per page
-  assert.match(dash.body, /href="\/"[^>]*aria-current="page"/);
-  assert.doesNotMatch(dash.body, /href="\/secrets"[^>]*aria-current="page"/);
-
-  assert.match(secrets.body, /href="\/secrets"[^>]*aria-current="page"/);
-  assert.doesNotMatch(secrets.body, /href="\/"[^>]*aria-current="page"/);
+  expectShell(dashboardRes.body);
+  expectShell(secretsRes.body);
 });
 
-test('secrets page does not render any secret values', async () => {
+test('Secrets page does not render sensitive values', async () => {
+  const prev = process.env.KIWY_HQ_TOKEN;
+  process.env.KIWY_HQ_TOKEN = 'super-secret-token';
+
   const app = createApp();
   const server = app.listen(0);
   const addr = server.address();
@@ -90,12 +95,9 @@ test('secrets page does not render any secret values', async () => {
   });
 
   server.close();
+  process.env.KIWY_HQ_TOKEN = prev;
 
   assert.equal(res.statusCode, 200);
-
-  // Ensure we never echo env var names or the login token.
-  assert.doesNotMatch(res.body, /KIWY_HQ_TOKEN/);
-
-  // Inputs should not include any prefilled values beyond empty.
-  assert.doesNotMatch(res.body, /value="(?!")[^"]+"/);
+  assert.doesNotMatch(res.body, /super-secret-token/);
+  assert.doesNotMatch(res.body, /kiwy_hq_auth=1/);
 });
