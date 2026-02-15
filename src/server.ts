@@ -125,20 +125,23 @@ export function createApp() {
   });
 
   app.get('/login', (_req, res) => {
-    res
-      .status(200)
-      .type('html')
-      .send(`<!doctype html>
-<html>
-  <head><meta charset="utf-8"><title>Kiwy HQ - Login</title></head>
-  <body>
-    <h1>Login</h1>
-    <form method="post" action="/login">
-      <label>Token <input type="password" name="token" autocomplete="current-password" /></label>
-      <button type="submit">Login</button>
-    </form>
-  </body>
-</html>`);
+    const contentHtml = `
+      <div class="card" style="grid-column: span 12; max-width: 520px; margin: 18px auto;">
+        <h2 style="margin:0 0 6px; font-size: 16px;">Entrar a Kiwy HQ</h2>
+        <p style="margin:0 0 14px; color: var(--muted);">Pega tu token para entrar. (El token vive como <code>KIWY_HQ_TOKEN</code> en el servidor.)</p>
+        <form method="post" action="/login">
+          <label style="display:block; margin-bottom: 10px;">
+            <span class="tag" style="display:block; margin-bottom: 6px;">Token</span>
+            <input type="password" name="token" autocomplete="current-password" placeholder="••••••••"
+              style="width:100%; padding:10px; border-radius: 12px; border: 1px solid var(--border); background: rgba(11,16,32,.25); color: var(--text);" />
+          </label>
+          <button class="navlink" type="submit" style="justify-content:center;">Login</button>
+        </form>
+      </div>
+    `;
+
+    // Reuse the neon shell but hide nav by setting active to dashboard (nav is fine even on login)
+    res.status(200).type('html').send(pageLayout({ title: 'Login', active: 'dashboard', contentHtml }));
   });
 
   app.post('/login', (req, res) => {
