@@ -14,8 +14,9 @@ test('pageLayout renders the shared Kiwy shell with primary navigation', () => {
     contentHtml: '<p>ok</p>',
   });
 
-  assert.match(html, /data-kiwy-shell="v1"/);
+  assert.match(html, /data-kiwy-shell="v2"/);
   assert.match(html, /<nav[^>]*aria-label="Primary"/);
   assert.match(html, /<a class="navlink" href="\/" aria-current="page">Dashboard<\/a>/);
+  assert.match(html, /<a class="navlink" href="\/status" >Project status<\/a>/);
   assert.match(html, /<a class="navlink" href="\/secrets" >Secrets<\/a>/);
 });

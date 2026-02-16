@@ -43,10 +43,11 @@ function request(
 }
 
 function expectShell(html: string) {
-  assert.match(html, /data-kiwy-shell="v1"/);
+  assert.match(html, /data-kiwy-shell="v2"/);
   assert.match(html, /<h1>\s*Kiwy HQ\s*<\/h1>/);
   assert.match(html, /<nav[^>]*aria-label="Primary"/);
   assert.match(html, /<a[^>]*href="\/"[^>]*>Dashboard<\/a>/);
+  assert.match(html, /<a[^>]*href="\/status"[^>]*>Project status<\/a>/);
   assert.match(html, /<a[^>]*href="\/secrets"[^>]*>Secrets<\/a>/);
 }
 

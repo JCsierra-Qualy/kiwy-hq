@@ -189,3 +189,17 @@ test('GET /secrets requires auth', async () => {
   assert.equal(res.statusCode, 302);
   assert.equal(res.headers.location, '/login');
 });
+
+test('GET /status requires auth', async () => {
+  const app = createApp();
+  const server = app.listen(0);
+  const addr = server.address();
+  assert.equal(typeof addr, 'object');
+  const port = (addr as any).port as number;
+
+  const res = await request(port, { method: 'GET', path: '/status' });
+  server.close();
+
+  assert.equal(res.statusCode, 302);
+  assert.equal(res.headers.location, '/login');
+});

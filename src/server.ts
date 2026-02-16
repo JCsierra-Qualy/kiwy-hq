@@ -1,12 +1,12 @@
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import { readSecrets, writeSecrets, type SecretsField } from './secrets-store';
+import { readHqStatus, writeHqStatus, type MacroProjectKey } from './hq-status-store';
 import { escapeHtml, pageLayout } from './ui';
 
 const AUTH_COOKIE_NAME = 'kiwy_hq_auth';
 
 function authRequiredMiddleware(req: express.Request, res: express.Response, next: express.NextFunction) {
-  // Public endpoints
   if (req.path === '/health' || req.path === '/login') return next();
 
   const authed = req.cookies?.[AUTH_COOKIE_NAME] === '1';
@@ -15,58 +15,173 @@ function authRequiredMiddleware(req: express.Request, res: express.Response, nex
   return res.redirect(302, '/login');
 }
 
+function formatTimestamp(ts?: string) {
+  if (!ts) return '—';
+  const d = new Date(ts);
+  if (Number.isNaN(d.getTime())) return escapeHtml(ts);
+  return escapeHtml(d.toISOString().slice(0, 16).replace('T', ' ') + ' UTC');
+}
+
 export function createApp() {
   const app = express();
 
-  // Middleware
   app.use(cookieParser());
   app.use(express.urlencoded({ extended: false }));
   app.use(authRequiredMiddleware);
 
   app.get('/health', (_req, res) => res.json({ ok: true }));
 
-  app.get('/', (_req, res) => {
+  app.get('/', async (_req, res) => {
+    const [stored, status] = await Promise.all([readSecrets(), readHqStatus()]);
+
+    const secretFields: SecretsField[] = [
+      'appsheetAppId',
+      'appsheetCrmKey',
+      'appsheetOpsKey',
+      'appsheetRegion',
+      'appsheetKey',
+      'n8nKey',
+      'githubPat',
+    ];
+    const configuredSecrets = secretFields.filter((f) => typeof (stored as any)?.[f] === 'string').length;
+
+    const statusFields: MacroProjectKey[] = ['qualiver', 'echo', 'kuenti', 'personal'];
+    const statusReady = statusFields.filter((f) => status[f] && status[f] !== 'No status yet.').length;
+
+    const macroCard = (name: string, key: MacroProjectKey) => `
+      <section class="card">
+        <h2>${escapeHtml(name)}</h2>
+        <p>${escapeHtml(status[key])}</p>
+        <div class="pillrow">
+          <a class="pill" href="/status"><span>Edit status</span> <small>one sentence</small></a>
+        </div>
+      </section>
+    `;
+
     const contentHtml = `
+      <h2 class="headline">Dashboard</h2>
+      <p class="subhead">Quick pulse across projects, status readiness, and HQ configuration health.</p>
+
       <div class="grid">
-        <section class="card">
-          <h2>Qualiver</h2>
-          <p>Quality ops and field checks.</p>
-          <div class="pillrow">
-            <a class="pill" href="#"><span>Open Qualiver</span> <small>(soon)</small></a>
-            <a class="pill" href="#"><span>Latest checks</span> <small>(soon)</small></a>
-          </div>
+        <section class="card kpi">
+          <div class="kpiLabel">Projects tracked</div>
+          <div class="kpiValue">4</div>
+          <div class="kpiLabel">Qualiver · ECHO · Kuenti · Personal</div>
         </section>
+        <section class="card kpi">
+          <div class="kpiLabel">Statuses updated</div>
+          <div class="kpiValue">${statusReady}/4</div>
+          <div class="kpiLabel">Last update: ${formatTimestamp(status.updatedAt)}</div>
+        </section>
+        <section class="card kpi">
+          <div class="kpiLabel">Secrets configured</div>
+          <div class="kpiValue">${configuredSecrets}/7</div>
+          <div class="kpiLabel">Operational readiness indicator</div>
+        </section>
+        <section class="card kpi">
+          <div class="kpiLabel">System</div>
+          <div class="kpiValue">OK</div>
+          <div class="kpiLabel">Auth active · local files secured</div>
+        </section>
+      </div>
 
-        <section class="card">
-          <h2>ECHO</h2>
-          <p>Alerts, inbox, and follow-ups.</p>
-          <div class="pillrow">
-            <a class="pill" href="#"><span>Open ECHO</span> <small>(soon)</small></a>
-            <a class="pill" href="#"><span>Recent alerts</span> <small>(soon)</small></a>
-          </div>
-        </section>
+      <div class="divider"></div>
+      <h2 class="headline" style="font-size:18px;">Macro project status (single sentence)</h2>
+      <p class="subhead">A concise sentence per project to communicate where we are now.</p>
 
-        <section class="card">
-          <h2>Kuenti</h2>
-          <p>Knowledge, docs, and quick reference.</p>
-          <div class="pillrow">
-            <a class="pill" href="#"><span>Open Kuenti</span> <small>(soon)</small></a>
-            <a class="pill" href="#"><span>Search</span> <small>(soon)</small></a>
-          </div>
-        </section>
-
-        <section class="card">
-          <h2>Personal</h2>
-          <p>Settings and private tools.</p>
-          <div class="pillrow">
-            <a class="pill" href="/secrets"><span>Secrets</span> <small>(AppSheet / n8n)</small></a>
-            <a class="pill" href="#"><span>Profile</span> <small>(soon)</small></a>
-          </div>
-        </section>
+      <div class="grid">
+        ${macroCard('Qualiver', 'qualiver')}
+        ${macroCard('ECHO', 'echo')}
+        ${macroCard('Kuenti', 'kuenti')}
+        ${macroCard('Personal / Other', 'personal')}
       </div>
     `;
 
     res.type('html').send(pageLayout({ title: 'Dashboard', active: 'dashboard', contentHtml }));
+  });
+
+  app.get('/status', async (req, res) => {
+    const saved = req.query?.saved === '1';
+    const status = await readHqStatus();
+
+    const statusInput = (field: MacroProjectKey, label: string, hint: string) => `
+      <div class="field">
+        <div class="fieldRow">
+          <span class="fieldLabel">${escapeHtml(label)}</span>
+          <span class="statusPill"><span class="statusDot on" aria-hidden="true"></span>Updated: ${formatTimestamp(
+            status.fieldUpdatedAt?.[field],
+          )}</span>
+        </div>
+        <input class="input" type="text" name="${field}" maxlength="220" value="${escapeHtml(status[field])}" />
+        <span class="formHint">${escapeHtml(hint)}</span>
+      </div>
+    `;
+
+    const contentHtml = `
+      <h2 class="headline">Project status board</h2>
+      <p class="subhead">Write exactly one sentence per macro project. This is an executive pulse, not a CRM action panel.</p>
+
+      <div id="toast" class="toast hidden" role="status" aria-live="polite">
+        Status saved.
+        <small>Changes written to <code>data/hq-status.json</code>.</small>
+      </div>
+
+      <form method="post" action="/status">
+        <div class="grid">
+          <section class="card" style="grid-column: span 12;">
+            <div class="sectionTitle">
+              <h2>Macro project pulse</h2>
+              <span class="statusPill"><span class="statusDot on" aria-hidden="true"></span>Last update: ${formatTimestamp(
+                status.updatedAt,
+              )}</span>
+            </div>
+            <p class="formHint">Keep each line short and concrete (max 220 chars).</p>
+            ${statusInput('qualiver', 'Qualiver', 'Example: \"Pilot validations closed; now preparing rollout checklist.\"')}
+            ${statusInput('echo', 'ECHO', 'Example: \"Inbox triage stabilized; automating alert priorities next.\"')}
+            ${statusInput('kuenti', 'Kuenti', 'Example: \"Core docs restructured; search quality improved this week.\"')}
+            ${statusInput('personal', 'Personal / Other (optional)', 'Example: \"Personal productivity stack stable, no blockers.\"')}
+          </section>
+
+          <section class="card" style="grid-column: span 12; padding: 0; background: transparent; border: none; box-shadow: none;">
+            <div class="stickyBar">
+              <button class="navlink" type="submit">Save status</button>
+            </div>
+          </section>
+        </div>
+      </form>
+
+      <script>
+        (function () {
+          var saved = ${saved ? 'true' : 'false'};
+          if (!saved) return;
+          var toast = document.getElementById('toast');
+          if (!toast) return;
+          toast.classList.remove('hidden');
+          window.setTimeout(function () { toast.classList.add('hidden'); }, 2600);
+          try {
+            var url = new URL(window.location.href);
+            url.searchParams.delete('saved');
+            window.history.replaceState({}, document.title, url.toString());
+          } catch {}
+        })();
+      </script>
+    `;
+
+    res.type('html').send(pageLayout({ title: 'Project status', active: 'status', contentHtml }));
+  });
+
+  app.post('/status', async (req, res) => {
+    const body = req.body || {};
+    const getString = (name: string) => (typeof (body as any)[name] === 'string' ? String((body as any)[name]) : '');
+
+    await writeHqStatus({
+      qualiver: getString('qualiver'),
+      echo: getString('echo'),
+      kuenti: getString('kuenti'),
+      personal: getString('personal'),
+    });
+
+    return res.redirect(302, '/status?saved=1');
   });
 
   app.get('/secrets', async (req, res) => {
@@ -88,11 +203,11 @@ export function createApp() {
     };
 
     const contentHtml = `
-      <h2 style="margin: 0 0 10px;">Secrets & Config</h2>
-      <p class="formHint">Stored locally in <code>data/secrets.json</code> (gitignored). We never render raw secrets in HTML. <strong>Leaving a field blank keeps the existing value.</strong></p>
+      <h2 class="headline">Secrets & config</h2>
+      <p class="subhead">Stored locally in <code>data/secrets.json</code> (gitignored). We never render raw secrets. Blank input keeps current value.</p>
 
       <div id="toast" class="toast hidden" role="status" aria-live="polite">
-        Saved.
+        Secrets saved.
         <small>Changes written to <code>data/secrets.json</code>.</small>
       </div>
 
@@ -103,7 +218,7 @@ export function createApp() {
               <h2>AppSheet CRM</h2>
               ${statusPill(isSet(stored?.appsheetCrmKey) && isSet(stored?.appsheetAppId), stored?.updatedAt)}
             </div>
-            <p class="formHint">Key + App ID used by CRM automations. Leave blank to keep; use the clear checkbox to intentionally remove.</p>
+            <p class="formHint">Key + App ID used by CRM automations. Leave blank to keep. Use clear checkbox to intentionally remove.</p>
 
             <div class="field">
               <div class="fieldRow">
@@ -189,7 +304,7 @@ export function createApp() {
               <h2>GitHub</h2>
               ${statusPill(isSet(stored?.githubPat), fieldUpdatedAt('githubPat'))}
             </div>
-            <p class="formHint">Used for PR automation. Recommended: fine-grained token with Pull requests: Read/Write on repo <code>JCsierra-Qualy/kiwy-hq</code>.</p>
+            <p class="formHint">Used for PR automation. Recommended token scope: Pull requests Read/Write on <code>JCsierra-Qualy/kiwy-hq</code>.</p>
 
             <div class="field">
               <div class="fieldRow">
@@ -201,9 +316,9 @@ export function createApp() {
             </div>
           </section>
 
-          <section class="card" style="grid-column: span 12; padding: 0; background: transparent; border: none;">
+          <section class="card" style="grid-column: span 12; padding: 0; background: transparent; border: none; box-shadow: none;">
             <div class="stickyBar">
-              <button class="navlink" type="submit">Save changes</button>
+              <button class="navlink" type="submit">Save secrets</button>
             </div>
           </section>
         </div>
@@ -275,7 +390,6 @@ export function createApp() {
       </div>
     `;
 
-    // Reuse the neon shell but hide nav by setting active to dashboard (nav is fine even on login)
     res.status(200).type('html').send(pageLayout({ title: 'Login', active: 'dashboard', contentHtml }));
   });
 
@@ -284,7 +398,6 @@ export function createApp() {
     const providedToken = typeof req.body?.token === 'string' ? req.body.token : '';
 
     if (!expectedToken) {
-      // Misconfiguration: don't reveal or log tokens.
       return res.status(500).type('text').send('Server is not configured');
     }
 
