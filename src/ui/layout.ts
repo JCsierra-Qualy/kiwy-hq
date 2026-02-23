@@ -1,4 +1,4 @@
-export type NavKey = 'dashboard' | 'status' | 'secrets';
+export type NavKey = 'dashboard' | 'status' | 'secrets' | 'credentials';
 
 export function escapeHtml(input: string) {
   return input
@@ -189,6 +189,7 @@ export function pageLayout(opts: { title: string; active: NavKey; contentHtml: s
           ${navLink('dashboard', 'Dashboard', '/')}
           ${navLink('status', 'Project status', '/status')}
           ${navLink('secrets', 'Secrets', '/secrets')}
+          ${navLink('credentials', 'Credentials', '/credentials')}
           <form method="post" action="/logout" style="margin-left:auto">
             <button class="navlink" type="submit">Logout</button>
           </form>

@@ -2,6 +2,7 @@ import express from 'express';
 import cookieParser from 'cookie-parser';
 import { readSecrets, writeSecrets, type SecretsField } from './secrets-store';
 import { readHqStatus, writeHqStatus, type MacroProjectKey } from './hq-status-store';
+import { clearCredential, importKnownCredentials, maskValue, readCredentials, upsertCredential } from './credentials-store';
 import { escapeHtml, pageLayout } from './ui';
 
 const AUTH_COOKIE_NAME = 'kiwy_hq_auth';
@@ -372,6 +373,114 @@ export function createApp() {
     await writeSecrets(update);
 
     return res.redirect(302, '/secrets?saved=1');
+  });
+
+  app.get('/credentials', async (req, res) => {
+    const imported = req.query?.imported === '1';
+    const saved = req.query?.saved === '1';
+    const db = await readCredentials();
+
+    const rows = db.items
+      .sort((a, b) => a.label.localeCompare(b.label))
+      .map(
+        (x) => `
+          <tr>
+            <td><strong>${escapeHtml(x.label)}</strong><div class="formHint">${escapeHtml(x.key)}</div></td>
+            <td>${escapeHtml(maskValue(x.value))}</td>
+            <td>${escapeHtml(x.source)}</td>
+            <td>${formatTimestamp(x.updatedAt)}</td>
+            <td>
+              <form method="post" action="/credentials/clear" style="display:inline;">
+                <input type="hidden" name="key" value="${escapeHtml(x.key)}" />
+                <button class="navlink" type="submit">Clear</button>
+              </form>
+            </td>
+          </tr>
+        `,
+      )
+      .join('');
+
+    const contentHtml = `
+      <h2 class="headline">Credentials Hub</h2>
+      <p class="subhead">Aquí puedes centralizar APIs sin repetirlas: importar detectadas, crear nuevas y actualizar existentes.</p>
+
+      <div id="toast" class="toast ${saved || imported ? '' : 'hidden'}" role="status" aria-live="polite">
+        ${imported ? 'APIs detectadas e importadas.' : 'Credencial guardada.'}
+      </div>
+
+      <div class="grid">
+        <section class="card" style="grid-column: span 12;">
+          <div class="sectionTitle">
+            <h2>Importar APIs conocidas</h2>
+            <span class="statusPill"><span class="statusDot on" aria-hidden="true"></span>Total: ${db.items.length}</span>
+          </div>
+          <p class="formHint">Toma secretos ya existentes (legacy + variables de entorno comunes) y los agrega al HQ.</p>
+          <form method="post" action="/credentials/import">
+            <button class="navlink" type="submit">Importar APIs detectadas</button>
+          </form>
+        </section>
+
+        <section class="card" style="grid-column: span 12;">
+          <div class="sectionTitle"><h2>Crear / actualizar credencial</h2></div>
+          <form method="post" action="/credentials/upsert">
+            <div class="field">
+              <span class="fieldLabel">Clave interna (ej. google.sheets.api_key)</span>
+              <input class="input" type="text" name="key" required maxlength="120" />
+            </div>
+            <div class="field">
+              <span class="fieldLabel">Etiqueta visible</span>
+              <input class="input" type="text" name="label" required maxlength="120" />
+            </div>
+            <div class="field">
+              <span class="fieldLabel">Valor secreto</span>
+              <input class="input" type="password" name="value" required autocomplete="new-password" />
+            </div>
+            <div class="stickyBar"><button class="navlink" type="submit">Guardar credencial</button></div>
+          </form>
+        </section>
+
+        <section class="card" style="grid-column: span 12;">
+          <h2 style="margin:0 0 10px;">Inventario actual</h2>
+          <div style="overflow:auto">
+            <table style="width:100%; border-collapse: collapse;">
+              <thead>
+                <tr>
+                  <th style="text-align:left; padding:8px; border-bottom:1px solid var(--border)">Credencial</th>
+                  <th style="text-align:left; padding:8px; border-bottom:1px solid var(--border)">Mask</th>
+                  <th style="text-align:left; padding:8px; border-bottom:1px solid var(--border)">Source</th>
+                  <th style="text-align:left; padding:8px; border-bottom:1px solid var(--border)">Updated</th>
+                  <th style="text-align:left; padding:8px; border-bottom:1px solid var(--border)">Action</th>
+                </tr>
+              </thead>
+              <tbody>${rows || '<tr><td colspan="5" style="padding:10px;color:var(--muted)">Sin credenciales aún.</td></tr>'}</tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+    `;
+
+    res.type('html').send(pageLayout({ title: 'Credentials', active: 'credentials', contentHtml }));
+  });
+
+  app.post('/credentials/import', async (_req, res) => {
+    await importKnownCredentials();
+    return res.redirect(302, '/credentials?imported=1');
+  });
+
+  app.post('/credentials/upsert', async (req, res) => {
+    const key = typeof req.body?.key === 'string' ? req.body.key.trim() : '';
+    const label = typeof req.body?.label === 'string' ? req.body.label.trim() : '';
+    const value = typeof req.body?.value === 'string' ? req.body.value.trim() : '';
+    if (!key || !label || !value) return res.status(400).type('text').send('Missing fields');
+
+    await upsertCredential({ key, label, value, source: 'manual' });
+    return res.redirect(302, '/credentials?saved=1');
+  });
+
+  app.post('/credentials/clear', async (req, res) => {
+    const key = typeof req.body?.key === 'string' ? req.body.key.trim() : '';
+    if (key) await clearCredential(key);
+    return res.redirect(302, '/credentials?saved=1');
   });
 
   app.get('/login', (_req, res) => {

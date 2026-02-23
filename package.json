@@ -5,9 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "node --import tsx --test test/**/*.ts",
-    "dev": "node --watch dist/server.js",
+    "dev": "node --watch dist/src/server.js",
     "build": "tsc -p tsconfig.json",
-    "start": "node dist/server.js",
+    "start": "node dist/src/server.js",
     "pr:create": "node scripts/create-pr.mjs"
   },
   "keywords": [],
