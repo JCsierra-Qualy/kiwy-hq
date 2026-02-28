@@ -1,0 +1,1587 @@
+{
+  "generated_at_utc": "2026-02-28T22:06:55.209449+00:00",
+  "hq_version": "v2-pm",
+  "pm": {
+    "title": "Project Management · Qualiver",
+    "status": "Atención alta",
+    "summary": "Abiertas: 72 · Vencidas operativas: 18 · Bloqueadas: 4",
+    "proposals": [
+      {
+        "id": "run_ops_report_now",
+        "title": "Correr corte operativo ahora",
+        "why": "Hay muchas vencidas operativas.",
+        "impact": "Te doy un plan de choque actualizado para hoy."
+      },
+      {
+        "id": "rerun_failed_crons",
+        "title": "Reintentar automatizaciones con error",
+        "why": "Hay 2 cron(s) en error.",
+        "impact": "Reducimos ruido y recuperamos flujo automático."
+      },
+      {
+        "id": "run_meeting_monitor_now",
+        "title": "Revisar reuniones nuevas ahora",
+        "why": "Garantizar que no se perdió ninguna acción crítica.",
+        "impact": "Se crean tareas y resumen inmediato si hay novedades."
+      }
+    ]
+  },
+  "tokens": {
+    "total_tokens_recent": 3326330,
+    "input_tokens_recent": 7293373,
+    "output_tokens_recent": 201579,
+    "by_activity": [
+      {
+        "job": "Qualiver - Nudges equipo 11:30/15:30/17:30",
+        "jobId": "f6728cf1-9c1e-4e57-9fa8-110a71923658",
+        "input_tokens": 1572332,
+        "output_tokens": 36009,
+        "total_tokens": 848438
+      },
+      {
+        "job": "Task Report PM",
+        "jobId": "2f56476b-ef7f-4f03-ad23-05874916d576",
+        "input_tokens": 1059451,
+        "output_tokens": 20148,
+        "total_tokens": 809546
+      },
+      {
+        "job": "Monitor Google Record Meetings",
+        "jobId": "72fb1bef-ead1-402a-86f3-955966861ba1",
+        "input_tokens": 3125456,
+        "output_tokens": 67558,
+        "total_tokens": 719042
+      },
+      {
+        "job": "Task Report AM",
+        "jobId": "981d9465-2b91-422c-b564-c86aee5db1d3",
+        "input_tokens": 388897,
+        "output_tokens": 20643,
+        "total_tokens": 296088
+      },
+      {
+        "job": "Qualiver - Resumen tareas mañana",
+        "jobId": "b12e1195-4669-414a-b73c-b3a832f5197d",
+        "input_tokens": 241174,
+        "output_tokens": 11939,
+        "total_tokens": 179990
+      },
+      {
+        "job": "Qualiver - Resumen tareas tarde",
+        "jobId": "7af11556-2fad-473b-b10c-7ebef26214e9",
+        "input_tokens": 271789,
+        "output_tokens": 16265,
+        "total_tokens": 155797
+      },
+      {
+        "job": "Qualiver - Reporte ejecutivo 17:45",
+        "jobId": "94a2477c-92ec-4701-be80-07ed7ca42f83",
+        "input_tokens": 292555,
+        "output_tokens": 16147,
+        "total_tokens": 134761
+      },
+      {
+        "job": "Qualiver - Indicador diario 12:00 (laborables)",
+        "jobId": "25ab9e91-2c8d-49f1-a288-12b22c86108e",
+        "input_tokens": 287581,
+        "output_tokens": 12178,
+        "total_tokens": 114632
+      },
+      {
+        "job": "HQ v1 - Refresh snapshot",
+        "jobId": "fe74478c-56b0-4371-827e-95bc43eabbe1",
+        "input_tokens": 54138,
+        "output_tokens": 692,
+        "total_tokens": 68036
+      }
+    ]
+  },
+  "automation": {
+    "cron_total": 9,
+    "cron_enabled": 9,
+    "cron_error": 2,
+    "cron_ok": 7,
+    "history": [
+      {
+        "ts": 1772316125403,
+        "job": "Task Report PM",
+        "status": "ok",
+        "tokens": 167650,
+        "detail": "Reporte 5:00 p. m. Qualiver (comparado desde el corte de la mañana, 9:00 a. m. hora Bogotá)  Resumen rápido: - Tareas con movimiento: 12 - Tareas cerradas/completadas: 0  Dónde se movió más trabajo: -"
+      },
+      {
+        "ts": 1772316125403,
+        "job": "Qualiver - Resumen tareas tarde",
+        "status": "ok",
+        "tokens": 20421,
+        "detail": "Corte de tarde Qualiver (UTC 2026-02-28 22:00)  1) KPIs - Total tareas: 3,876 - Abiertas: 74 - Vencidas operativas (excluye Validando): 18 - Validando: 2 - Validando fuera de plazo: 2 - Bloqueadas: 4 "
+      },
+      {
+        "ts": 1772315660079,
+        "job": "HQ v1 - Refresh snapshot",
+        "status": "ok",
+        "tokens": 11335,
+        "detail": ""
+      },
+      {
+        "ts": 1772314442265,
+        "job": "HQ v1 - Refresh snapshot",
+        "status": "ok",
+        "tokens": 11346,
+        "detail": ""
+      },
+      {
+        "ts": 1772313221634,
+        "job": "HQ v1 - Refresh snapshot",
+        "status": "ok",
+        "tokens": 11376,
+        "detail": ""
+      },
+      {
+        "ts": 1772312019611,
+        "job": "HQ v1 - Refresh snapshot",
+        "status": "ok",
+        "tokens": 11337,
+        "detail": ""
+      },
+      {
+        "ts": 1772310820953,
+        "job": "HQ v1 - Refresh snapshot",
+        "status": "ok",
+        "tokens": 11321,
+        "detail": ""
+      },
+      {
+        "ts": 1772309623162,
+        "job": "HQ v1 - Refresh snapshot",
+        "status": "ok",
+        "tokens": 11321,
+        "detail": ""
+      },
+      {
+        "ts": 1772303556767,
+        "job": "Monitor Google Record Meetings",
+        "status": "ok",
+        "tokens": 23723,
+        "detail": ""
+      },
+      {
+        "ts": 1772298422656,
+        "job": "Monitor Google Record Meetings",
+        "status": "ok",
+        "tokens": 25320,
+        "detail": ""
+      },
+      {
+        "ts": 1772298376558,
+        "job": "Monitor Google Record Meetings",
+        "status": "ok",
+        "tokens": 67004,
+        "detail": "Se detectaron **8 documentos nuevos** en la carpeta de Google Record meetings. Procesé cada uno y apliqué creación de tareas en AppSheet con regla de meta activa (incluyendo creación de meta cuando fa"
+      },
+      {
+        "ts": 1772294463570,
+        "job": "Task Report AM",
+        "status": "ok",
+        "tokens": 29381,
+        "detail": "🥝 **Reporte de movimiento Qualiver (desde ayer 00:00 hasta hoy 11:00, hora Bogotá)**  ¡Buen ritmo de ejecución! - **Tareas con movimiento:** **90** - **Tareas cerradas/validadas:** **66** - **Tareas a"
+      },
+      {
+        "ts": 1772290834360,
+        "job": "Monitor Google Record Meetings",
+        "status": "ok",
+        "tokens": 41937,
+        "detail": "¡Hola! Aquí Kiwy 🥝, lista para ayudarte con el monitoreo de las grabaciones de reuniones.  He revisado la carpeta de Google Drive y puedo identificar los nuevos documentos de notas de reunión (esos \"N"
+      },
+      {
+        "ts": 1772287239370,
+        "job": "Qualiver - Resumen tareas mañana",
+        "status": "ok",
+        "tokens": 31923,
+        "detail": "¡Ding! 🥝 ¡Ya tengo el reporte fresquito de Qualiver! Aquí va el resumen ejecutivo, con ese toque Kiwy que te gusta:  ---  ### 🥝 Resumen Ejecutivo Qualiver - 28 de febrero de 2026 🥝  ¡Hola, Juan! Tu Ki"
+      },
+      {
+        "ts": 1772283837860,
+        "job": "Monitor Google Record Meetings",
+        "status": "error",
+        "tokens": 0,
+        "detail": "Error: All models failed (3): openai-codex/gpt-5.3-codex: ⚠️ API rate limit reached. Please try again later. (rate_limit) | google/gemini-2.5-flash: ⚠️ API rate limit reached. Please try again later. "
+      },
+      {
+        "ts": 1772232346835,
+        "job": "Qualiver - Reporte ejecutivo 17:45",
+        "status": "ok",
+        "tokens": 45275,
+        "detail": "¡Listo, Juan! Aquí tienes el reporte ejecutivo de cierre para hoy, 27 de febrero de 2026. ¡Kiwy en acción! 🥝  ---  **Kiwy 🥝**  **Reporte ejecutivo de cierre de Qualiver para hoy, 27/02/2026** 🥳  ---  "
+      },
+      {
+        "ts": 1772231460656,
+        "job": "Qualiver - Nudges equipo 11:30/15:30/17:30",
+        "status": "error",
+        "tokens": 240608,
+        "detail": "⚠️ ✉️ Message: +573123862652 failed"
+      },
+      {
+        "ts": 1772229707468,
+        "job": "Task Report PM",
+        "status": "ok",
+        "tokens": 40677,
+        "detail": "¡Listo! Ya tengo el script y las credenciales. Ahora, para poder contarte qué tareas se han movido, voy a hacer una pequeña \"magia\" en el script `heartbeat_ops_check.py`. En lugar de que solo me cuent"
+      },
+      {
+        "ts": 1772229707468,
+        "job": "Qualiver - Resumen tareas tarde",
+        "status": "error",
+        "tokens": 17413,
+        "detail": "¡Hola, Juan! Aquí tu Kiwy 🥝 con el corte de tarde de Qualiver. ¡Parece que el día se ha movido mucho y tenemos un panorama interesante para cerrar la jornada!  ---  **Corte Operativo Qualiver - Noche "
+      },
+      {
+        "ts": 1772226022996,
+        "job": "Monitor Google Record Meetings",
+        "status": "error",
+        "tokens": 35402,
+        "detail": "⚠️ 📖 Read: from memory/last_gdrive_check.txt failed"
+      },
+      {
+        "ts": 1772224244133,
+        "job": "Qualiver - Nudges equipo 11:30/15:30/17:30",
+        "status": "error",
+        "tokens": 225396,
+        "detail": "⚠️ ✉️ Message failed"
+      },
+      {
+        "ts": 1772218830687,
+        "job": "Monitor Google Record Meetings",
+        "status": "ok",
+        "tokens": 37335,
+        "detail": ""
+      },
+      {
+        "ts": 1772211767442,
+        "job": "Qualiver - Indicador diario 12:00 (laborables)",
+        "status": "error",
+        "tokens": 0,
+        "detail": "Error: All models failed (3): openai-codex/gpt-5.3-codex: No available auth profile for openai-codex (all in cooldown or unavailable). (rate_limit) | google/gemini-2.5-flash: Provider google is in coo"
+      },
+      {
+        "ts": 1772211767441,
+        "job": "Monitor Google Record Meetings",
+        "status": "error",
+        "tokens": 335998,
+        "detail": "**Resumen Ejecutivo:** Juan Camilo Sierra, Yenifer Mazo, Guillermo Souto y José Ortiz revisaron tareas pendientes. Se identificó una tarea de Guillermo mal asignada que Yenifer ya había completado, y "
+      },
+      {
+        "ts": 1772209841707,
+        "job": "Qualiver - Nudges equipo 11:30/15:30/17:30",
+        "status": "error",
+        "tokens": 114185,
+        "detail": "¡Kiwy en acción! Ya tengo toda la información que necesitamos. 🎉  Aquí está el resumen de lo que encontré:  **Equipo con WhatsApp (¡Natalia, te extrañaremos en los nudges, no tienes número!):**  *   *"
+      },
+      {
+        "ts": 1772208016728,
+        "job": "Task Report AM",
+        "status": "ok",
+        "tokens": 110420,
+        "detail": "¡Hola, Juan! 🥝 ¡Tu asistente Kiwy trae las novedades del día fresquitas como un kiwi recién cogido!  He echado un ojito a las tareas de Qualiver AppSheet y encontré algunas cositas que necesitan un em"
+      },
+      {
+        "ts": 1772200848539,
+        "job": "Qualiver - Resumen tareas mañana",
+        "status": "ok",
+        "tokens": 30537,
+        "detail": "¡Hola, Juan! Aquí está el resumen de la operación de Qualiver para mañana, Kiwy al rescate 🥝  **🚀 Resumen Ejecutivo Qualiver - 27 de Febrero, 2026 🚀**  **1. KPIs Principales** *   **Total de tareas:**"
+      },
+      {
+        "ts": 1772145948254,
+        "job": "Qualiver - Reporte ejecutivo 17:45",
+        "status": "ok",
+        "tokens": 49250,
+        "detail": "🥝 ¡Hola Juan! Aquí tu reporte ejecutivo de cierre de Qualiver para hoy, 26/02/2026 🥳  📊 Resumen del Día:    Puntos totales del día: 37.50 ✨  🏆 Ranking por Persona (Puntos | Movidas | Cerradas):    - G"
+      },
+      {
+        "ts": 1772145043210,
+        "job": "Qualiver - Nudges equipo 11:30/15:30/17:30",
+        "status": "ok",
+        "tokens": 117618,
+        "detail": "¡Ding! 🥝 ¡Mensajes de cierre de día enviados con éxito al equipo Qualiver!  Aquí el resumen para Juan: *   Se enviaron mensajes de recordatorio de cierre de día a:     *   **Guillermo Souto:** Incluye"
+      },
+      {
+        "ts": 1772143258496,
+        "job": "Task Report PM",
+        "status": "ok",
+        "tokens": 114909,
+        "detail": "### Reporte de Tareas de Qualiver AppSheet (5 PM) 🥝  ¡Hola, Juan! Tu asistente Kiwy te trae las novedades de la tarde. Parece que el día ha sido productivo, ¡no tenemos tareas vencidas y olvidadas! Es"
+      },
+      {
+        "ts": 1772143258495,
+        "job": "Qualiver - Resumen tareas tarde",
+        "status": "ok",
+        "tokens": 17260,
+        "detail": "**🥝 Resumen Operativo Qualiver - Corte de Tarde 🥝** *(Jueves, 26 de Febrero de 2026 - 10:00 PM UTC)*  ¡Hola, Juan! Kiwy aquí con la chispa de los datos y la energía de la productividad. ¡He estado rev"
+      },
+      {
+        "ts": 1772137844190,
+        "job": "Qualiver - Nudges equipo 11:30/15:30/17:30",
+        "status": "ok",
+        "tokens": 47538,
+        "detail": "El debug me da una pista clave: `DEBUG: AppSheet response status: 200, text: `. La solicitud HTTP fue exitosa, pero la respuesta de AppSheet está vacía, no es JSON válido. Esto podría ser por `APP_ID`"
+      },
+      {
+        "ts": 1772125315003,
+        "job": "Qualiver - Indicador diario 12:00 (laborables)",
+        "status": "error",
+        "tokens": 61376,
+        "detail": "⚠️ 📝 Edit: in qualiver/daily_report.py (105 chars) failed"
+      },
+      {
+        "ts": 1772121621793,
+        "job": "Task Report AM",
+        "status": "ok",
+        "tokens": 36900,
+        "detail": "¡Excelente! Ya tengo el script de revisión de tareas. Parece que está diseñado para identificar tareas *bloqueadas* y las que están *vencidas y sin cambios por varios días*. Es super útil para alertas"
+      },
+      {
+        "ts": 1772114447743,
+        "job": "Qualiver - Resumen tareas mañana",
+        "status": "ok",
+        "tokens": 32400,
+        "detail": "**Reporte Ejecutivo Qualiver**  **Fecha:** 26 de Febrero de 2026  ---  **1. KPIs Principales**  *   **Total de Tareas:** 3821 *   **Tareas Abiertas:** 77 *   **Tareas Vencidas (Operativas):** 18 (¡Kiw"
+      },
+      {
+        "ts": 1772059524966,
+        "job": "Qualiver - Reporte ejecutivo 17:45",
+        "status": "ok",
+        "tokens": 19880,
+        "detail": "¡Hola, Juan! 🥝 Ya es hora del reporte ejecutivo de cierre del día para Qualiver. Voy a buscar toda la información que necesitas en AppSheet para traerte los puntos, el ranking y las tareas de hoy. ¡Un"
+      },
+      {
+        "ts": 1772058625884,
+        "job": "Qualiver - Nudges equipo 11:30/15:30/17:30",
+        "status": "error",
+        "tokens": 19062,
+        "detail": "¡Claro que sí, Juan! Ya es hora de los nudges proactivos para el equipo Qualiver. Como es la 5:30 PM en Bogotá, les enviaré el último llamado de cierre con mi energía kiwi. 🥝  Para esto, voy a ejecuta"
+      },
+      {
+        "ts": 1772056919599,
+        "job": "Task Report PM",
+        "status": "ok",
+        "tokens": 31173,
+        "detail": "¡Ding! 🥝 ¡Ya tengo el reporte de tareas de Qualiver!  Aquí te va un resumen amigable de lo que se movió hoy hasta las 5 PM:  Parece que tenemos 3 tareas en estado **\"Bloqueada\"** que necesitan un empu"
+      },
+      {
+        "ts": 1772056919598,
+        "job": "Qualiver - Resumen tareas tarde",
+        "status": "ok",
+        "tokens": 16838,
+        "detail": ""
+      },
+      {
+        "ts": 1772051450032,
+        "job": "Qualiver - Nudges equipo 11:30/15:30/17:30",
+        "status": "ok",
+        "tokens": 25701,
+        "detail": "¡Excelente! Ya tengo el script `heartbeat_ops_check.py` y las credenciales de AppSheet.  Mi plan es este: 1.  Como el script actual está enfocado en generar un reporte de \"OK\" o de tareas bloqueadas/v"
+      },
+      {
+        "ts": 1772038946031,
+        "job": "Qualiver - Indicador diario 12:00 (laborables)",
+        "status": "ok",
+        "tokens": 37286,
+        "detail": "¡Ajá! Este script `qualiver_tasks_report_named_points.py` es como un buen jugo de kiwi 🥝: refrescante y útil, ¡pero necesito ajustarlo un poco para que sea el batido perfecto que Juan pidió!  Hay algu"
+      },
+      {
+        "ts": 1772037147607,
+        "job": "Qualiver - Nudges equipo 11:30/15:30/17:30",
+        "status": "ok",
+        "tokens": 21671,
+        "detail": "Nudge Qualiver ejecutado (franja Bogotá 11:30, tono preventivo).  Enviados por WhatsApp: - Guillermo Souto (+573226516657) - Jose Ortiz (+573008144727) - Yenifer Mazo (+573123862652)  No enviado: - Na"
+      },
+      {
+        "ts": 1772035310193,
+        "job": "Task Report AM",
+        "status": "ok",
+        "tokens": 24069,
+        "detail": "Reporte de movimiento de tareas (Qualiver) 🥝 Ventana: desde ayer 00:00 UTC hasta hoy 16:00 UTC.  • **Tareas con movimiento:** 80 • **Tareas cerradas:** 15  **Cómo se movieron por estado** - Abierta: 3"
+      },
+      {
+        "ts": 1772028102709,
+        "job": "Qualiver - Resumen tareas mañana",
+        "status": "ok",
+        "tokens": 19048,
+        "detail": "Resumen ejecutivo Qualiver (hoy)  1) KPIs principales   - Total tareas: 3,784   - Abiertas: 112   - Vencidas operativas (excluye “Validando”): 5   - En validación: 63   - Validando fuera de plazo: 61 "
+      },
+      {
+        "ts": 1771973171156,
+        "job": "Qualiver - Reporte ejecutivo 17:45",
+        "status": "ok",
+        "tokens": 20356,
+        "detail": "*Reporte ejecutivo de cierre — hoy (America/Bogota)*  • *Puntos totales del día:* **108.0 pts**   (≈ 54 horas equipo, usando 1 punto = 30 min)  • *Ranking por persona (puntos | movidas | cerradas):*  "
+      },
+      {
+        "ts": 1771970586463,
+        "job": "Task Report PM",
+        "status": "ok",
+        "tokens": 164327,
+        "detail": "¡Listo! Resumen de movimiento desde el reporte de la mañana (tomando como corte 11:00 a. m. COT / 16:00 UTC):  - **Movimientos detectados:** 3 tareas actualizadas   - **Cierres:** **0** tareas cerrada"
+      },
+      {
+        "ts": 1771970586463,
+        "job": "Qualiver - Resumen tareas tarde",
+        "status": "error",
+        "tokens": 17815,
+        "detail": "Corte de tarde Qualiver (UTC 2026-02-24)  1) KPIs - Total tareas: 3,784 - Abiertas (no cerradas): 118 - Vencidas operativas (excluye Validando): 7 - En Validando: 55 - Validando fuera de plazo: 36 - B"
+      },
+      {
+        "ts": 1771952497264,
+        "job": "Qualiver - Indicador diario 12:00 (laborables)",
+        "status": "ok",
+        "tokens": 15970,
+        "detail": "Reporte diario indicador Qualiver (corte hoy, America/Bogota: 2026-02-24)  Resumen para chat de Juan (WhatsApp): Total del día: 9.5 puntos  Ranking por persona: 1) Jose Ortiz — 4.0 pts   2) Juan Camil"
+      },
+      {
+        "ts": 1771948851200,
+        "job": "Task Report AM",
+        "status": "ok",
+        "tokens": 17570,
+        "detail": "¡Buen cierre de ventana!   **Reporte de movimiento desde ayer (últimas 24h, corte 16:00 UTC):**  - **37 tareas con movimiento** (cambios de estado/actualizaciones) - **7 tareas cerradas**  **Dónde hub"
+      },
+      {
+        "ts": 1771941641394,
+        "job": "Qualiver - Resumen tareas mañana",
+        "status": "ok",
+        "tokens": 11285,
+        "detail": "Resumen ejecutivo Qualiver (hoy, 24-feb-2026 UTC)  1) KPIs principales - Total de tareas: **4,136** - Abiertas (incluye Validando/En Progreso/Bloqueada): **89** - Vencidas: **45** (≈51% de las abierta"
+      }
+    ]
+  },
+  "ops": {
+    "kpis": {
+      "total": 3876,
+      "abiertas": 72,
+      "vencidas_operativas": 18,
+      "validando": 0,
+      "validando_fuera_plazo": 0,
+      "bloqueadas": 4
+    },
+    "projects": [
+      {
+        "semaforo": "🟢",
+        "codigo": "ADMIN-01",
+        "nombre": "Administración Qualiver General",
+        "abiertas": 17,
+        "vencidas": 0,
+        "bloqueadas": 0,
+        "validando": 0
+      },
+      {
+        "semaforo": "🟡",
+        "codigo": "QinH-17",
+        "nombre": "Continuacion Digitalización Zona E",
+        "abiertas": 12,
+        "vencidas": 4,
+        "bloqueadas": 0,
+        "validando": 0
+      },
+      {
+        "semaforo": "🔴",
+        "codigo": "QinH-20",
+        "nombre": "Digitalización Mensual The Tool Kit",
+        "abiertas": 11,
+        "vencidas": 8,
+        "bloqueadas": 0,
+        "validando": 0
+      },
+      {
+        "semaforo": "🟢",
+        "codigo": "QinH-26",
+        "nombre": "Digitalizacion BLEPAN",
+        "abiertas": 9,
+        "vencidas": 1,
+        "bloqueadas": 0,
+        "validando": 0
+      },
+      {
+        "semaforo": "🔴",
+        "codigo": "QinH-22",
+        "nombre": "Digitalización y Automatización REMO",
+        "abiertas": 7,
+        "vencidas": 0,
+        "bloqueadas": 2,
+        "validando": 0
+      },
+      {
+        "semaforo": "🟢",
+        "codigo": "QinH-11",
+        "nombre": "Digitalización Globo Creativo",
+        "abiertas": 5,
+        "vencidas": 0,
+        "bloqueadas": 0,
+        "validando": 0
+      },
+      {
+        "semaforo": "🔴",
+        "codigo": "QinH-21",
+        "nombre": "Digitalización BEIPLAS",
+        "abiertas": 4,
+        "vencidas": 2,
+        "bloqueadas": 0,
+        "validando": 0
+      },
+      {
+        "semaforo": "🟢",
+        "codigo": "QinH-9",
+        "nombre": "Solución Facturas Macro Marcas",
+        "abiertas": 2,
+        "vencidas": 0,
+        "bloqueadas": 0,
+        "validando": 0
+      }
+    ],
+    "critical_tasks": [
+      "7962d48e | Mejoras Tablero Digital | estado=Abierta | urg=Alta | plazo=02/27/2026 | resp=1003059949",
+      "9724e6ff | Crear Telas por Color OP | estado=Abierta | urg=Alta | plazo=02/27/2026 | resp=1003059949",
+      "57e490b7 | Totalizar por proceso | estado=Abierta | urg=Alta | plazo=02/27/2026 | resp=1003059949",
+      "9f6ff0e6 | Mejorar tablero diario basado en lo mismo que se hablo par | estado=En Progreso | urg=Alta | plazo=02/27/2026 | resp=1013457030",
+      "79b9490e | Automatización Inventario Producción | estado=En Progreso | urg=Alta | plazo=02/27/2026 | resp=525936",
+      "1c18b445 | Copiar Muestras CON TODO igual | estado=En Progreso | urg=Alta | plazo=02/27/2026 | resp=525936",
+      "44ef8c86 | Crear módulo de despachos | estado=En Progreso | urg=Baja | plazo=02/19/2026 | resp=525936",
+      "abe53750 | Crear modulo de Producto terminado (POR REFERENCIA y CLIEN | estado=En Progreso | urg=Media | plazo=02/23/2026 | resp=525936",
+      "2920046d | Ajustes de los precios de la BD | estado=En Progreso | urg=Media | plazo=02/26/2026 | resp=1013457030",
+      "18c5c40c | Nueva columna para \"Momento\" | estado=En Progreso | urg=Media | plazo=02/26/2026 | resp=1013457030"
+    ]
+  },
+  "meetings": {
+    "last_review_utc": "2026-02-28T17:07:01Z",
+    "processed_count": 12,
+    "last_docs": [
+      {
+        "id": "1U2KIyChuGJpBqnstMa8p1RSgc8gn6GeYCmbY9GvOALM",
+        "name": "Cierre Daily Qualiver: 2026/02/25 11:07 GMT-05:00 - Notas de Gemini",
+        "modifiedTime": "2026-02-25T17:47:06.920Z"
+      },
+      {
+        "id": "1y_EiFxYryBDpCdsrs7Vn4_7B71Dm6dFWDuoEAqWHOnQ",
+        "name": "Cierre Daily Qualiver: 2026/02/25 13:42 GMT-05:00 - Notas de Gemini",
+        "modifiedTime": "2026-02-25T19:18:57.249Z"
+      },
+      {
+        "id": "1SI79Jlr_XwhbpCm0CL4egZSmMbpX7bNAZTVy8rkVdIc",
+        "name": "La reunión se inició a las 2026/02/25 14:25 GMT-05:00 - Notas de Gemini",
+        "modifiedTime": "2026-02-25T20:31:48.861Z"
+      },
+      {
+        "id": "1SgOIwI_Uya_SWGTh3uSoTvQMidMBX2pSj4hs2I4thGU",
+        "name": "Daily Qualiver: 2026/02/26 08:30 GMT-05:00 - Notas de Gemini",
+        "modifiedTime": "2026-02-26T13:55:17.796Z"
+      },
+      {
+        "id": "1Zg366MP0j-Ln0tnQaTJTtgQEv_JyxUrfpIftS71TYjE",
+        "name": "Cierre Daily Qualiver: 2026/02/26 11:03 GMT-05:00 - Notas de Gemini",
+        "modifiedTime": "2026-02-26T16:20:56.814Z"
+      },
+      {
+        "id": "1NU99gKSOX-9SCAaV6ewepoZZfiUKpkrALo-Anyk5wSg",
+        "name": "Seguimiento semanal Zona E: 2026/02/26 11:28 GMT-05:00 - Notas de Gemini",
+        "modifiedTime": "2026-02-26T17:11:19.206Z"
+      },
+      {
+        "id": "1MQAJ_LyFO7XEgG1I07xxD3Md_Rpur2BNcappfHgSoGM",
+        "name": "Daily Qualiver: 2026/02/27 08:29 GMT-05:00 - Notas de Gemini",
+        "modifiedTime": "2026-02-27T13:58:45.751Z"
+      },
+      {
+        "id": "1-wT6aEZ2Y7UrQiDNp9eyNzsca_KIbQ0Tvq9ycEg52XU",
+        "name": "Seguimiento Semanal Qualiver: 2026/02/27 15:28 GMT-05:00 - Notas de Gemini",
+        "modifiedTime": "2026-02-27T21:57:04.150Z"
+      }
+    ]
+  },
+  "heartbeat": {
+    "configured": true,
+    "has_meeting_flow": true
+  },
+  "skills": {
+    "all": [
+      {
+        "status": "missing",
+        "name": "🔐 1password",
+        "description": "Set up and use 1Password CLI (op). Use when installing the",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "missing",
+        "name": "📝 apple-notes",
+        "description": "Manage Apple Notes via the `memo` CLI on macOS (create, view,",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "missing",
+        "name": "⏰ apple-",
+        "description": "Manage Apple Reminders via remindctl CLI (list, add, edit,",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "missing",
+        "name": "🐻 bear-notes",
+        "description": "Create, search, and manage Bear notes via grizzly CLI.",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "missing",
+        "name": "📰 blogwatcher",
+        "description": "Monitor blogs and RSS/Atom feeds for updates using the",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "missing",
+        "name": "🫐 blucli",
+        "description": "BluOS CLI (blu) for discovery, playback, grouping, and volume.",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "missing",
+        "name": "🫧 bluebubbles",
+        "description": "Use when you need to send or manage iMessages via BlueBubbles",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "missing",
+        "name": "📸 camsnap",
+        "description": "Capture frames or clips from RTSP/ONVIF cameras.",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "ready",
+        "name": "📦 clawhub",
+        "description": "Use the ClawHub CLI to search, install, update, and publish",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "ready",
+        "name": "🧩 coding-agent",
+        "description": "Delegate coding tasks to Codex, Claude Code, or Pi agents via",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "missing",
+        "name": "🎮 discord",
+        "description": "Discord ops via the message tool (channel=discord).",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "missing",
+        "name": "🎛️ eightctl",
+        "description": "Control Eight Sleep pods (status, temperature, alarms,",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "missing",
+        "name": "♊️ gemini",
+        "description": "Gemini CLI for one-shot Q&A, summaries, and generation.",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "ready",
+        "name": "📦 gh-issues",
+        "description": "Fetch GitHub issues, spawn sub-agents to implement fixes and",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "missing",
+        "name": "🧲 gifgrep",
+        "description": "Search GIF providers with CLI/TUI, download results, and",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "ready",
+        "name": "📦 github",
+        "description": "Interact with GitHub using the `gh` CLI. Use `gh issue`, `gh",
+        "source": "openclaw-workspace",
+        "installedLocal": false
+      },
+      {
+        "status": "ready",
+        "name": "📦 gog",
+        "description": "Google Workspace CLI for Gmail, Calendar, Drive, Contacts,",
+        "source": "openclaw-workspace",
+        "installedLocal": false
+      },
+      {
+        "status": "missing",
+        "name": "📍 goplaces",
+        "description": "Query Google Places API (New) via the goplaces CLI for text",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "ready",
+        "name": "📦 healthcheck",
+        "description": "Host security hardening and risk-tolerance configuration for",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "missing",
+        "name": "📧 himalaya",
+        "description": "CLI to manage emails via IMAP/SMTP. Use `himalaya` to list,",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "missing",
+        "name": "📨 imsg",
+        "description": "iMessage/SMS CLI for listing chats, history, and sending",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "missing",
+        "name": "📦 mcporter",
+        "description": "Use the mcporter CLI to list, configure, auth, and call MCP",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "missing",
+        "name": "📊 model-usage",
+        "description": "Use CodexBar CLI local cost usage to summarize per-model usage",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "missing",
+        "name": "🍌 nano-banana-",
+        "description": "Generate or edit images via Gemini 3 Pro Image (Nano Banana",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "missing",
+        "name": "📄 nano-pdf",
+        "description": "Edit PDFs with natural-language instructions using the nano-",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "missing",
+        "name": "📝 notion",
+        "description": "Notion API for creating and managing pages, databases, and",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "missing",
+        "name": "💎 obsidian",
+        "description": "Work with Obsidian vaults (plain Markdown notes) and automate",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "ready",
+        "name": "🖼️ openai-image-",
+        "description": "Batch-generate images via OpenAI Images API. Random prompt",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "missing",
+        "name": "🎙️ openai-",
+        "description": "Local speech-to-text with the Whisper CLI (no API key).",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "ready",
+        "name": "☁️ openai-",
+        "description": "Transcribe audio via OpenAI Audio Transcriptions API (Whisper).",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "missing",
+        "name": "💡 openhue",
+        "description": "Control Philips Hue lights and scenes via the OpenHue CLI.",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "missing",
+        "name": "🧿 oracle",
+        "description": "Best practices for using the oracle CLI (prompt + file",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "missing",
+        "name": "🛵 ordercli",
+        "description": "Foodora-only CLI for checking past orders and active order",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "missing",
+        "name": "👀 peekaboo",
+        "description": "Capture and automate macOS UI with the Peekaboo CLI.",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "missing",
+        "name": "🗣️ sag",
+        "description": "ElevenLabs text-to-speech with mac-style say UX.",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "missing",
+        "name": "📜 session-logs",
+        "description": "Search and analyze your own session logs (older/parent",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "missing",
+        "name": "🗣️ sherpa-onnx-",
+        "description": "Local text-to-speech via sherpa-onnx (offline, no cloud)",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "ready",
+        "name": "📦 skill-creator",
+        "description": "Create or update AgentSkills. Use when designing, structuring,",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "missing",
+        "name": "💬 slack",
+        "description": "Use when you need to control Slack from OpenClaw via the slack",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "missing",
+        "name": "🌊 songsee",
+        "description": "Generate spectrograms and feature-panel visualizations from",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "missing",
+        "name": "🔊 sonoscli",
+        "description": "Control Sonos speakers (discover/status/play/volume/group).",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "missing",
+        "name": "🎵 spotify-player",
+        "description": "Terminal Spotify playback/search via spogo (preferred) or",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "missing",
+        "name": "🧾 summarize",
+        "description": "Summarize or extract text/transcripts from URLs, podcasts, and",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "missing",
+        "name": "✅ things-mac",
+        "description": "Manage Things 3 via the `things` CLI on macOS (add/update",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "ready",
+        "name": "🧵 tmux",
+        "description": "Remote-control tmux sessions for interactive CLIs by sending",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "missing",
+        "name": "📋 trello",
+        "description": "Manage Trello boards, lists, and cards via the Trello REST API.",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "ready",
+        "name": "🎞️ video-frames",
+        "description": "Extract frames or short clips from videos using ffmpeg.",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "missing",
+        "name": "📞 voice-call",
+        "description": "Start voice calls via the OpenClaw voice-call plugin.",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "missing",
+        "name": "📦 wacli",
+        "description": "Interact with WhatsApp via the wacli CLI tool. Use for sending",
+        "source": "openclaw-workspace",
+        "installedLocal": false
+      },
+      {
+        "status": "ready",
+        "name": "🌤️ weather",
+        "description": "Get current weather and forecasts via wttr.in or Open-Meteo.",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "missing",
+        "name": "𝕏 xurl",
+        "description": "A CLI tool for making authenticated requests to the X",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "ready",
+        "name": "📦 auto-updater",
+        "description": "Automatically update Clawdbot and all installed skills once",
+        "source": "openclaw-workspace",
+        "installedLocal": false
+      },
+      {
+        "status": "ready",
+        "name": "📦 claude-code",
+        "description": "Interact with Claude Code CLI for coding assistance,",
+        "source": "openclaw-workspace",
+        "installedLocal": false
+      },
+      {
+        "status": "ready",
+        "name": "📦 clawddocs",
+        "description": "Clawdbot documentation expert with decision tree navigation,",
+        "source": "openclaw-workspace",
+        "installedLocal": false
+      },
+      {
+        "status": "ready",
+        "name": "📦 find-skills",
+        "description": "Helps users discover and install agent skills when they ask",
+        "source": "openclaw-workspace",
+        "installedLocal": false
+      },
+      {
+        "status": "ready",
+        "name": "📦 google-meet",
+        "description": "Google Meet API integration with managed OAuth. Create meeting",
+        "source": "openclaw-workspace",
+        "installedLocal": false
+      },
+      {
+        "status": "ready",
+        "name": "📦 google-sheets",
+        "description": "Google Sheets API integration with managed OAuth. Read and",
+        "source": "openclaw-workspace",
+        "installedLocal": false
+      },
+      {
+        "status": "ready",
+        "name": "📦 google-slides",
+        "description": "Google Slides API integration with managed OAuth. Create",
+        "source": "openclaw-workspace",
+        "installedLocal": false
+      },
+      {
+        "status": "ready",
+        "name": "📦 humanizer",
+        "description": "Remove signs of AI-generated writing from text. Use when",
+        "source": "openclaw-workspace",
+        "installedLocal": false
+      },
+      {
+        "status": "ready",
+        "name": "📦 ontology",
+        "description": "Typed knowledge graph for structured agent memory and",
+        "source": "openclaw-workspace",
+        "installedLocal": false
+      },
+      {
+        "status": "ready",
+        "name": "📦 proactive-",
+        "description": "Transform AI agents from task-followers into proactive",
+        "source": "openclaw-workspace",
+        "installedLocal": false
+      },
+      {
+        "status": "ready",
+        "name": "📦 self-",
+        "description": "Captures learnings, errors, and corrections to enable",
+        "source": "openclaw-workspace",
+        "installedLocal": false
+      },
+      {
+        "status": "ready",
+        "name": "📦 frontend-",
+        "description": "Expert frontend design guidelines for creating beautiful,",
+        "source": "openclaw-workspace",
+        "installedLocal": false
+      },
+      {
+        "status": "ready",
+        "name": "📦 wa-relay",
+        "description": "WhatsApp message relay for OpenClaw v0.2.0. Routes third-party",
+        "source": "openclaw-workspace",
+        "installedLocal": false
+      },
+      {
+        "status": "ready",
+        "name": "📦 youtube-",
+        "description": "Fetch and read transcripts from YouTube videos. Use when you",
+        "source": "openclaw-workspace",
+        "installedLocal": false
+      },
+      {
+        "status": "ready",
+        "name": "appsheet-task-creator",
+        "description": "Local private skill",
+        "source": "local-private",
+        "installedLocal": true
+      },
+      {
+        "status": "ready",
+        "name": "ui-ux-design",
+        "description": "Local private skill",
+        "source": "local-private",
+        "installedLocal": true
+      }
+    ],
+    "ready": [
+      {
+        "status": "ready",
+        "name": "📦 clawhub",
+        "description": "Use the ClawHub CLI to search, install, update, and publish",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "ready",
+        "name": "🧩 coding-agent",
+        "description": "Delegate coding tasks to Codex, Claude Code, or Pi agents via",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "ready",
+        "name": "📦 gh-issues",
+        "description": "Fetch GitHub issues, spawn sub-agents to implement fixes and",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "ready",
+        "name": "📦 github",
+        "description": "Interact with GitHub using the `gh` CLI. Use `gh issue`, `gh",
+        "source": "openclaw-workspace",
+        "installedLocal": false
+      },
+      {
+        "status": "ready",
+        "name": "📦 gog",
+        "description": "Google Workspace CLI for Gmail, Calendar, Drive, Contacts,",
+        "source": "openclaw-workspace",
+        "installedLocal": false
+      },
+      {
+        "status": "ready",
+        "name": "📦 healthcheck",
+        "description": "Host security hardening and risk-tolerance configuration for",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "ready",
+        "name": "🖼️ openai-image-",
+        "description": "Batch-generate images via OpenAI Images API. Random prompt",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "ready",
+        "name": "☁️ openai-",
+        "description": "Transcribe audio via OpenAI Audio Transcriptions API (Whisper).",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "ready",
+        "name": "📦 skill-creator",
+        "description": "Create or update AgentSkills. Use when designing, structuring,",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "ready",
+        "name": "🧵 tmux",
+        "description": "Remote-control tmux sessions for interactive CLIs by sending",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "ready",
+        "name": "🎞️ video-frames",
+        "description": "Extract frames or short clips from videos using ffmpeg.",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "ready",
+        "name": "🌤️ weather",
+        "description": "Get current weather and forecasts via wttr.in or Open-Meteo.",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "ready",
+        "name": "📦 auto-updater",
+        "description": "Automatically update Clawdbot and all installed skills once",
+        "source": "openclaw-workspace",
+        "installedLocal": false
+      },
+      {
+        "status": "ready",
+        "name": "📦 claude-code",
+        "description": "Interact with Claude Code CLI for coding assistance,",
+        "source": "openclaw-workspace",
+        "installedLocal": false
+      },
+      {
+        "status": "ready",
+        "name": "📦 clawddocs",
+        "description": "Clawdbot documentation expert with decision tree navigation,",
+        "source": "openclaw-workspace",
+        "installedLocal": false
+      },
+      {
+        "status": "ready",
+        "name": "📦 find-skills",
+        "description": "Helps users discover and install agent skills when they ask",
+        "source": "openclaw-workspace",
+        "installedLocal": false
+      },
+      {
+        "status": "ready",
+        "name": "📦 google-meet",
+        "description": "Google Meet API integration with managed OAuth. Create meeting",
+        "source": "openclaw-workspace",
+        "installedLocal": false
+      },
+      {
+        "status": "ready",
+        "name": "📦 google-sheets",
+        "description": "Google Sheets API integration with managed OAuth. Read and",
+        "source": "openclaw-workspace",
+        "installedLocal": false
+      },
+      {
+        "status": "ready",
+        "name": "📦 google-slides",
+        "description": "Google Slides API integration with managed OAuth. Create",
+        "source": "openclaw-workspace",
+        "installedLocal": false
+      },
+      {
+        "status": "ready",
+        "name": "📦 humanizer",
+        "description": "Remove signs of AI-generated writing from text. Use when",
+        "source": "openclaw-workspace",
+        "installedLocal": false
+      },
+      {
+        "status": "ready",
+        "name": "📦 ontology",
+        "description": "Typed knowledge graph for structured agent memory and",
+        "source": "openclaw-workspace",
+        "installedLocal": false
+      },
+      {
+        "status": "ready",
+        "name": "📦 proactive-",
+        "description": "Transform AI agents from task-followers into proactive",
+        "source": "openclaw-workspace",
+        "installedLocal": false
+      },
+      {
+        "status": "ready",
+        "name": "📦 self-",
+        "description": "Captures learnings, errors, and corrections to enable",
+        "source": "openclaw-workspace",
+        "installedLocal": false
+      },
+      {
+        "status": "ready",
+        "name": "📦 frontend-",
+        "description": "Expert frontend design guidelines for creating beautiful,",
+        "source": "openclaw-workspace",
+        "installedLocal": false
+      },
+      {
+        "status": "ready",
+        "name": "📦 wa-relay",
+        "description": "WhatsApp message relay for OpenClaw v0.2.0. Routes third-party",
+        "source": "openclaw-workspace",
+        "installedLocal": false
+      },
+      {
+        "status": "ready",
+        "name": "📦 youtube-",
+        "description": "Fetch and read transcripts from YouTube videos. Use when you",
+        "source": "openclaw-workspace",
+        "installedLocal": false
+      },
+      {
+        "status": "ready",
+        "name": "appsheet-task-creator",
+        "description": "Local private skill",
+        "source": "local-private",
+        "installedLocal": true
+      },
+      {
+        "status": "ready",
+        "name": "ui-ux-design",
+        "description": "Local private skill",
+        "source": "local-private",
+        "installedLocal": true
+      }
+    ],
+    "missing": [
+      {
+        "status": "missing",
+        "name": "🔐 1password",
+        "description": "Set up and use 1Password CLI (op). Use when installing the",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "missing",
+        "name": "📝 apple-notes",
+        "description": "Manage Apple Notes via the `memo` CLI on macOS (create, view,",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "missing",
+        "name": "⏰ apple-",
+        "description": "Manage Apple Reminders via remindctl CLI (list, add, edit,",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "missing",
+        "name": "🐻 bear-notes",
+        "description": "Create, search, and manage Bear notes via grizzly CLI.",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "missing",
+        "name": "📰 blogwatcher",
+        "description": "Monitor blogs and RSS/Atom feeds for updates using the",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "missing",
+        "name": "🫐 blucli",
+        "description": "BluOS CLI (blu) for discovery, playback, grouping, and volume.",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "missing",
+        "name": "🫧 bluebubbles",
+        "description": "Use when you need to send or manage iMessages via BlueBubbles",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "missing",
+        "name": "📸 camsnap",
+        "description": "Capture frames or clips from RTSP/ONVIF cameras.",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "missing",
+        "name": "🎮 discord",
+        "description": "Discord ops via the message tool (channel=discord).",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "missing",
+        "name": "🎛️ eightctl",
+        "description": "Control Eight Sleep pods (status, temperature, alarms,",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "missing",
+        "name": "♊️ gemini",
+        "description": "Gemini CLI for one-shot Q&A, summaries, and generation.",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "missing",
+        "name": "🧲 gifgrep",
+        "description": "Search GIF providers with CLI/TUI, download results, and",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "missing",
+        "name": "📍 goplaces",
+        "description": "Query Google Places API (New) via the goplaces CLI for text",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "missing",
+        "name": "📧 himalaya",
+        "description": "CLI to manage emails via IMAP/SMTP. Use `himalaya` to list,",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "missing",
+        "name": "📨 imsg",
+        "description": "iMessage/SMS CLI for listing chats, history, and sending",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "missing",
+        "name": "📦 mcporter",
+        "description": "Use the mcporter CLI to list, configure, auth, and call MCP",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "missing",
+        "name": "📊 model-usage",
+        "description": "Use CodexBar CLI local cost usage to summarize per-model usage",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "missing",
+        "name": "🍌 nano-banana-",
+        "description": "Generate or edit images via Gemini 3 Pro Image (Nano Banana",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "missing",
+        "name": "📄 nano-pdf",
+        "description": "Edit PDFs with natural-language instructions using the nano-",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "missing",
+        "name": "📝 notion",
+        "description": "Notion API for creating and managing pages, databases, and",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "missing",
+        "name": "💎 obsidian",
+        "description": "Work with Obsidian vaults (plain Markdown notes) and automate",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "missing",
+        "name": "🎙️ openai-",
+        "description": "Local speech-to-text with the Whisper CLI (no API key).",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "missing",
+        "name": "💡 openhue",
+        "description": "Control Philips Hue lights and scenes via the OpenHue CLI.",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "missing",
+        "name": "🧿 oracle",
+        "description": "Best practices for using the oracle CLI (prompt + file",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "missing",
+        "name": "🛵 ordercli",
+        "description": "Foodora-only CLI for checking past orders and active order",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "missing",
+        "name": "👀 peekaboo",
+        "description": "Capture and automate macOS UI with the Peekaboo CLI.",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "missing",
+        "name": "🗣️ sag",
+        "description": "ElevenLabs text-to-speech with mac-style say UX.",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "missing",
+        "name": "📜 session-logs",
+        "description": "Search and analyze your own session logs (older/parent",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "missing",
+        "name": "🗣️ sherpa-onnx-",
+        "description": "Local text-to-speech via sherpa-onnx (offline, no cloud)",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "missing",
+        "name": "💬 slack",
+        "description": "Use when you need to control Slack from OpenClaw via the slack",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "missing",
+        "name": "🌊 songsee",
+        "description": "Generate spectrograms and feature-panel visualizations from",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "missing",
+        "name": "🔊 sonoscli",
+        "description": "Control Sonos speakers (discover/status/play/volume/group).",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "missing",
+        "name": "🎵 spotify-player",
+        "description": "Terminal Spotify playback/search via spogo (preferred) or",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "missing",
+        "name": "🧾 summarize",
+        "description": "Summarize or extract text/transcripts from URLs, podcasts, and",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "missing",
+        "name": "✅ things-mac",
+        "description": "Manage Things 3 via the `things` CLI on macOS (add/update",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "missing",
+        "name": "📋 trello",
+        "description": "Manage Trello boards, lists, and cards via the Trello REST API.",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "missing",
+        "name": "📞 voice-call",
+        "description": "Start voice calls via the OpenClaw voice-call plugin.",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      },
+      {
+        "status": "missing",
+        "name": "📦 wacli",
+        "description": "Interact with WhatsApp via the wacli CLI tool. Use for sending",
+        "source": "openclaw-workspace",
+        "installedLocal": false
+      },
+      {
+        "status": "missing",
+        "name": "𝕏 xurl",
+        "description": "A CLI tool for making authenticated requests to the X",
+        "source": "openclaw-bundled",
+        "installedLocal": false
+      }
+    ]
+  },
+  "agents": {
+    "ids": [
+      "main"
+    ],
+    "total": 1,
+    "jobs_by_agent": {
+      "main": 9
+    }
+  },
+  "team": {
+    "members": [
+      {
+        "id": "1152456698",
+        "name": "Juan Camilo Sierra Ramirez"
+      },
+      {
+        "id": "1039451589",
+        "name": "Natalia Jimenez"
+      },
+      {
+        "id": "525936",
+        "name": "Guillermo Souto"
+      },
+      {
+        "id": "1003059949",
+        "name": "Jose Ortiz"
+      },
+      {
+        "id": "1013457030",
+        "name": "Yenifer Mazo"
+      }
+    ],
+    "conversations": {
+      "status": "partial",
+      "note": "Vista parcial de solicitudes externas detectadas por relay/log local.",
+      "relay_requests": []
+    }
+  }
+}
