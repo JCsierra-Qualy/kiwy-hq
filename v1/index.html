@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Kiwy HQ</title>
+<style>
+:root{--bg:#06110b;--bg2:#0b1b12;--panel:#0f2218;--line:#1f5a3f;--txt:#dbffe8;--mut:#86cda7;--neon:#35ff9f;--neon2:#7dffcb;--danger:#ff6b7a;--side:230px}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,Arial;color:var(--txt);background:radial-gradient(900px 500px at 90% -10%,#0f3a24 0,transparent 50%),linear-gradient(180deg,var(--bg),var(--bg2))}
+.app{display:grid;grid-template-columns:var(--side) 1fr;min-height:100vh}.app.c{--side:78px}
+aside{border-right:1px solid var(--line);padding:10px;background:#08160f}.brand{display:flex;align-items:center;gap:10px;padding:9px;border:1px solid var(--line);border-radius:12px;background:#0d1e15}.btn{margin-left:auto;background:#0d271a;border:1px solid #2c7a53;color:var(--txt);border-radius:10px;padding:6px 9px;cursor:pointer}
+.nav{margin-top:10px;display:flex;flex-direction:column;gap:8px}.n{display:flex;gap:10px;align-items:center;padding:10px;border:1px solid var(--line);border-radius:11px;background:#0c1d15;cursor:pointer}.n.a{border-color:var(--neon);box-shadow:0 0 0 1px #1d7a51 inset,0 0 10px #1d7a5144}.ico{width:22px;text-align:center}.app.c .lbl,.app.c .name{display:none}.app.c .n{justify-content:center}
+main{padding:14px}.top{background:linear-gradient(180deg,#0d2016,#0a1a12);border:1px solid var(--line);border-radius:14px;padding:12px}.top h1{margin:0;font-size:28px;color:var(--neon2);text-shadow:0 0 16px #2bffb544}.mut{font-size:12px;color:var(--mut)}
+.panel{display:none}.panel.on{display:block}.grid{display:grid;grid-template-columns:repeat(4,minmax(120px,1fr));gap:10px;margin-top:10px}.card{background:linear-gradient(180deg,#0f2419,#0b1c14);border:1px solid var(--line);border-radius:14px;padding:12px}.k{font-size:12px;color:var(--mut)}.v{font-size:24px;font-weight:800}.two{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:8px;border-bottom:1px solid #1f4e37;text-align:left}
+.row{padding:8px;border:1px solid #21563c;border-radius:10px;background:#0a1912;margin:8px 0}.btn2{background:linear-gradient(180deg,var(--neon2),var(--neon));border:1px solid #67ffbe;color:#042413;padding:7px 10px;border-radius:9px;font-weight:800;cursor:pointer}
+.bad{color:var(--danger)}.ok{color:var(--neon)}
+.bar{height:8px;background:#0a1a13;border:1px solid #1e4c36;border-radius:999px;overflow:hidden}.bar>span{display:block;height:100%;background:linear-gradient(90deg,#2fff9f,#7dffcb)}
+input{width:100%;padding:10px;border-radius:10px;border:1px solid #2b7a53;background:#08170f;color:var(--txt)}
+@media(max-width:1100px){.grid{grid-template-columns:repeat(2,minmax(110px,1fr))}.two{grid-template-columns:1fr}}
+</style></head>
+<body><div class="app" id="app"><aside>
+<div class="brand"><div>🥝</div><div class="name"><b>Kiwy HQ</b></div><button class="btn" id="t">☰</button></div>
+<div class="nav">
+  <div class="n a" data-p="overview"><div class="ico">🏠</div><div class="lbl">Overview</div></div>
+  <div class="n" data-p="projects"><div class="ico">📌</div><div class="lbl">Projects</div></div>
+  <div class="n" data-p="team"><div class="ico">👥</div><div class="lbl">Team</div></div>
+  <div class="n" data-p="skills"><div class="ico">🧩</div><div class="lbl">Skills</div></div>
+</div></aside>
+<main>
+<div class="top"><h1>Project Management · Qualiver</h1><div id="st" class="mut"></div><div id="sum" style="margin-top:6px;font-weight:700"></div></div>
+
+<section class="panel on" id="p-overview">
+  <div class="grid" id="top"></div>
+  <div class="two">
+    <div class="card"><h3>Tokens recientes</h3><div id="tokMeta" class="mut"></div><div id="tokRows"></div></div>
+    <div class="card"><h3>Historial operativo</h3><table><thead><tr><th>Estado</th><th>Acción</th><th>Detalle</th><th>Tok</th></tr></thead><tbody id="hist"></tbody></table></div>
+  </div>
+</section>
+
+<section class="panel" id="p-projects">
+  <div class="card"><h3>Propuestas de Kiwy (solo Projects)</h3><div class="mut">Si apruebas, yo las ejecuto.</div><div id="props"></div><div id="out" class="mut"></div></div>
+  <div class="card" style="margin-top:10px"><h3>Vista general (compacta)</h3><table><thead><tr><th>Sem</th><th>Proyecto</th><th>Abiertas</th><th>Vencidas</th></tr></thead><tbody id="proy"></tbody></table></div>
+</section>
+
+<section class="panel" id="p-team">
+  <div class="card"><h3>Equipo</h3><div id="members"></div></div>
+  <div class="card" style="margin-top:10px"><h3>Solicitudes externas detectadas</h3><div id="rnote" class="mut"></div><table><thead><tr><th>Quién</th><th>Mensaje</th></tr></thead><tbody id="relay"></tbody></table></div>
+</section>
+
+<section class="panel" id="p-skills">
+  <div class="card"><h3>Skills (click para detalle)</h3><input id="q" placeholder="Buscar skill..."/><div id="smeta" class="mut" style="margin:6px 0"></div><div class="two"><div id="slist"></div><div id="sdetail" class="row mut">Selecciona un skill.</div></div></div>
+</section>
+</main></div>
+<script>
+let D=null;const esc=s=>(s||'').replace(/[&<>]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m]));
+function show(p){document.querySelectorAll('.n').forEach(x=>x.classList.toggle('a',x.dataset.p===p));document.querySelectorAll('.panel').forEach(x=>x.classList.remove('on'));document.getElementById('p-'+p).classList.add('on')}
+async function approve(id){out.textContent='Ejecutando...';const r=await fetch('/api/approve',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({actionId:id})});const j=await r.json();out.innerHTML=(j.ok?'<span class="ok">✅ Ejecutado</span>':'<span class="bad">⚠️ Error</span>')+' · '+esc(j.stdout||j.stderr||'');await load()}
+function renderSkills(q=''){const arr=(D.skills.all||[]).filter(s=>`${s.name} ${s.description}`.toLowerCase().includes(q.toLowerCase()));smeta.textContent=`${(D.skills.ready||[]).length} ready / ${(D.skills.all||[]).length} total`;slist.innerHTML=arr.map((s,i)=>`<div class='row' data-i='${i}' style='cursor:pointer'><b>${esc(s.name)}</b><div class='mut'>${esc((s.description||'').slice(0,80))}</div></div>`).join('');document.querySelectorAll('#slist .row').forEach(el=>el.onclick=()=>{const s=arr[Number(el.dataset.i)];sdetail.innerHTML=`<b>${esc(s.name)}</b><br><br>${esc(s.description||'')}<br><br><span class='mut'>Estado: ${s.status} · Fuente: ${esc(s.source||'n/a')}</span>`})}
+function render(){st.textContent=`Estado PM: ${D.pm.status} · ${D.generated_at_utc}`;sum.textContent=D.pm.summary;
+  top.innerHTML=[['Crons OK',D.automation.cron_ok],['Crons Error',D.automation.cron_error],['Abiertas',D.ops.kpis.abiertas],['Vencidas',D.ops.kpis.vencidas_operativas],['Bloqueadas',D.ops.kpis.bloqueadas],['Reuniones',D.meetings.processed_count],['Agentes',D.agents.total],['Tokens',D.tokens.total_tokens_recent]].map(([k,v])=>`<div class='card'><div class='k'>${k}</div><div class='v'>${v}</div></div>`).join('');
+  tokMeta.textContent=`Input: ${D.tokens.input_tokens_recent} · Output: ${D.tokens.output_tokens_recent}`;
+  const max=Math.max(1,...(D.tokens.by_activity||[]).map(x=>x.total_tokens||0));
+  tokRows.innerHTML=(D.tokens.by_activity||[]).slice(0,8).map(t=>`<div class='row'><div style='display:flex;justify-content:space-between'><span>${esc(t.job)}</span><b>${(t.total_tokens||0).toLocaleString()}</b></div><div class='bar'><span style='width:${Math.round((t.total_tokens||0)/max*100)}%'></span></div></div>`).join('');
+  hist.innerHTML=(D.automation.history||[]).slice(0,18).map(h=>`<tr><td class='${h.status==='ok'?'ok':'bad'}'>${h.status==='ok'?'✅':'⚠️'} ${h.status}</td><td>${esc(h.job)}</td><td>${esc(h.detail||'')}</td><td>${(h.tokens||0).toLocaleString()}</td></tr>`).join('');
+  props.innerHTML=(D.pm.proposals||[]).map(p=>`<div class='row'><b>${esc(p.title)}</b><div class='mut'>${esc(p.why)} · ${esc(p.impact)}</div><button class='btn2' onclick="approve('${p.id}')">Aprobar y ejecutar</button></div>`).join('');
+  proy.innerHTML=(D.ops.projects||[]).slice(0,10).map(p=>`<tr><td>${p.semaforo}</td><td>${esc(p.nombre)}</td><td>${p.abiertas}</td><td>${p.vencidas}</td></tr>`).join('');
+  members.innerHTML=(D.team.members||[]).map(m=>`<div class='row'><b>${esc(m.name)}</b><div class='mut'>ID: ${m.id}</div></div>`).join('');
+  rnote.textContent=D.team.conversations.note||'';
+  relay.innerHTML=(D.team.conversations.relay_requests||[]).slice(0,20).map(r=>`<tr><td>${esc(r.from)}</td><td>${esc(r.message)}</td></tr>`).join('')||'<tr><td colspan="2">Sin solicitudes externas en log local.</td></tr>';
+  renderSkills('');
+}
+async function load(){const r=await fetch('/api/summary?_='+Date.now());const j=await r.json();D=j.data;render()}
+document.querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>show(b.dataset.p));t.onclick=()=>app.classList.toggle('c');document.addEventListener('input',e=>{if(e.target.id==='q')renderSkills(e.target.value)});load();
+</script></body></html>
