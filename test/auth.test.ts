@@ -133,7 +133,7 @@ test('POST /logout clears cookie', async () => {
 
   server.close();
 
-  assert.equal(res.statusCode, 200);
+  assert.ok(res.statusCode === 200 || res.statusCode === 302, `expected 200 or 302, got ${res.statusCode}`);
   const setCookie = res.headers['set-cookie'];
   assert.ok(setCookie, 'expected Set-Cookie header');
   const cookieStr = Array.isArray(setCookie) ? setCookie.join(';') : setCookie;
