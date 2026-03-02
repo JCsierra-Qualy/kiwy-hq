@@ -910,8 +910,22 @@ export function createApp() {
   app.post('/login', (req, res) => {
     const expected = process.env.KIWY_HQ_TOKEN;
     const provided = typeof req.body?.token === 'string' ? req.body.token : '';
-    if (!expected) return res.status(500).type('text').send('Server not configured');
-    if (provided !== expected) return res.status(401).type('text').send('Unauthorized');
+    if (!expected) {
+      const errHtml = pageLayout({ title: 'Error de configuración', active: 'dashboard', contentHtml: `
+        <div style="min-height:70vh;display:flex;align-items:center;justify-content:center">
+          <div class="card" style="max-width:480px;border-color:rgba(244,63,94,0.35)">
+            <div style="font-size:13px;font-weight:700;color:var(--red);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.6px">Error de configuración</div>
+            <div style="font-size:15px;font-weight:600;margin-bottom:8px">Variable de entorno faltante</div>
+            <p style="color:var(--muted);font-size:13px;line-height:1.6">
+              El servidor no tiene configurada la variable <code>KIWY_HQ_TOKEN</code>.<br><br>
+              Ve a <strong>Vercel → Settings → Environment Variables</strong>, agrega
+              <code>KIWY_HQ_TOKEN</code> con un valor seguro y redeploya.
+            </p>
+          </div>
+        </div>` });
+      return res.status(500).type('html').send(errHtml);
+    }
+    if (provided !== expected) return res.status(401).type('text').send('Token incorrecto');
     res.cookie(AUTH_COOKIE, '1', { httpOnly: true, sameSite: 'lax', path: '/' });
     return res.redirect(302, '/');
   });
