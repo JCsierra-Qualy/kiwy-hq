@@ -834,7 +834,62 @@ requests.post("https://tu-dominio.vercel.app/api/push",
         return res.json({ ok: true });
       }
 
-      return res.status(400).json({ ok: false, error: 'Unknown type. Use "agent" or "cost".' });
+      if (type === 'status') {
+        // Actualizar pulso de macro-proyectos
+        const update: Partial<Record<MacroProjectKey, string>> = {};
+        for (const k of ['qualiver', 'echo', 'kuenti', 'personal'] as const) {
+          if (typeof body[k] === 'string') update[k] = body[k];
+        }
+        await writeHqStatus(update);
+        return res.json({ ok: true });
+      }
+
+      if (type === 'meeting') {
+        const { title, date, attendees, status: mStatus, project, notes } = body;
+        if (!title || !date) return res.status(400).json({ ok: false, error: 'meeting requires title and date' });
+        await addMeeting({
+          title: String(title),
+          date: String(date),
+          attendees: Array.isArray(attendees) ? attendees.map(String) : [],
+          status: (['upcoming', 'completed', 'cancelled'].includes(mStatus) ? mStatus : 'upcoming') as any,
+          project: typeof project === 'string' ? project : undefined,
+          notes: typeof notes === 'string' ? notes : undefined,
+        });
+        return res.json({ ok: true });
+      }
+
+      if (type === 'action') {
+        const { title, priority, status: aStatus, project, dueDate, id: actionId } = body;
+        if (!title && !actionId) return res.status(400).json({ ok: false, error: 'action requires title or id' });
+        if (actionId && aStatus) {
+          // Actualizar estado de acción existente
+          await updateActionStatus(String(actionId), aStatus);
+        } else {
+          await addAction({
+            title: String(title),
+            priority: (['high', 'medium', 'low'].includes(priority) ? priority : 'medium') as any,
+            status: (['pending', 'in-progress', 'done'].includes(aStatus) ? aStatus : 'pending') as any,
+            project: typeof project === 'string' ? project : undefined,
+            dueDate: typeof dueDate === 'string' ? dueDate : undefined,
+          });
+        }
+        return res.json({ ok: true });
+      }
+
+      if (type === 'suggestion') {
+        const { text, source, impact } = body;
+        if (!text) return res.status(400).json({ ok: false, error: 'suggestion requires text' });
+        await addSuggestion({
+          text: String(text),
+          source: typeof source === 'string' ? source : 'kiwy',
+          date: new Date().toISOString(),
+          status: 'pending',
+          impact: typeof impact === 'string' ? impact : undefined,
+        });
+        return res.json({ ok: true });
+      }
+
+      return res.status(400).json({ ok: false, error: 'Unknown type. Valid: agent | cost | status | meeting | action | suggestion' });
     } catch (err: any) {
       return res.status(500).json({ ok: false, error: String(err?.message ?? err) });
     }
