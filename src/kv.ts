@@ -29,7 +29,17 @@ function localPath(key: string): string {
   return path.join(process.cwd(), 'data', `${name}.json`);
 }
 
+/** True si estamos en el serverless de Vercel */
+function onVercel(): boolean {
+  return process.env.VERCEL === '1';
+}
+
 async function localRead<T>(key: string): Promise<T | null> {
+  if (onVercel()) {
+    // En Vercel sin KV configurado — devolvemos null (datos vacíos) en lugar de crashear
+    console.warn(`[kv] KV no configurado. Configura Upstash Redis en Vercel para persistencia. key=${key}`);
+    return null;
+  }
   try {
     const raw = await fs.readFile(localPath(key), 'utf8');
     return JSON.parse(raw) as T;
@@ -40,6 +50,11 @@ async function localRead<T>(key: string): Promise<T | null> {
 }
 
 async function localWrite<T>(key: string, value: T): Promise<void> {
+  if (onVercel()) {
+    // En Vercel sin KV configurado — avisamos pero no crasheamos
+    console.warn(`[kv] Escritura ignorada (sin KV). Configura Upstash Redis en Vercel. key=${key}`);
+    return;
+  }
   const fp = localPath(key);
   await fs.mkdir(path.dirname(fp), { recursive: true });
   const tmp = `${fp}.tmp`;

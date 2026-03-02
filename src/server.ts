@@ -795,6 +795,12 @@ requests.post("https://tu-dominio.vercel.app/api/push",
     const token = req.headers['x-kiwy-token'];
     if (token !== process.env.KIWY_HQ_TOKEN) return res.status(401).json({ ok: false, error: 'Unauthorized' });
 
+    // Advertir si KV no está configurado (datos no persistirán)
+    const { usingKv } = await import('./kv');
+    if (!usingKv()) {
+      console.warn('[/api/push] Upstash Redis no configurado — los datos no se guardarán. Conecta Upstash Redis en Vercel Integrations.');
+    }
+
     try {
       const body = req.body ?? {};
       const type = body.type;
