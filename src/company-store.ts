@@ -42,8 +42,12 @@ export type CompanyData = {
   updatedAt: string;
 };
 
+function dataDir() {
+  return process.env.VERCEL === '1' ? '/tmp/kiwy-data' : path.join(process.cwd(), 'data');
+}
+
 export function getCompanyFilePath(): string {
-  return process.env.KIWY_HQ_COMPANY_PATH || path.join(process.cwd(), 'data', 'company.json');
+  return process.env.KIWY_HQ_COMPANY_PATH || path.join(dataDir(), 'company.json');
 }
 
 const EMPTY: CompanyData = {

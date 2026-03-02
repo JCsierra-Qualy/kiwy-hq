@@ -78,8 +78,12 @@ const DEFAULT_AGENTS: Agent[] = [
   },
 ];
 
+function dataDir() {
+  return process.env.VERCEL === '1' ? '/tmp/kiwy-data' : path.join(process.cwd(), 'data');
+}
+
 export function getAgentsFilePath(): string {
-  return process.env.KIWY_HQ_AGENTS_PATH || path.join(process.cwd(), 'data', 'agents.json');
+  return process.env.KIWY_HQ_AGENTS_PATH || path.join(dataDir(), 'agents.json');
 }
 
 export async function readAgents(filePath = getAgentsFilePath()): Promise<AgentsData> {

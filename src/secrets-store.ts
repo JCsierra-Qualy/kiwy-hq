@@ -31,8 +31,12 @@ export type StoredSecrets = {
   fieldUpdatedAt?: Partial<Record<SecretsField, string>>;
 };
 
+function dataDir() {
+  return process.env.VERCEL === '1' ? '/tmp/kiwy-data' : path.join(process.cwd(), 'data');
+}
+
 export function getSecretsFilePath() {
-  return process.env.KIWY_HQ_SECRETS_PATH || path.join(process.cwd(), 'data', 'secrets.json');
+  return process.env.KIWY_HQ_SECRETS_PATH || path.join(dataDir(), 'secrets.json');
 }
 
 function isStringRecord(v: unknown): v is Record<string, string> {

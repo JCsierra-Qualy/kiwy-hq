@@ -15,8 +15,12 @@ type CredentialDb = {
   items: CredentialItem[];
 };
 
+function dataDir() {
+  return process.env.VERCEL === '1' ? '/tmp/kiwy-data' : path.join(process.cwd(), 'data');
+}
+
 export function getCredentialsFilePath() {
-  return process.env.KIWY_HQ_CREDENTIALS_PATH || path.join(process.cwd(), 'data', 'credentials.json');
+  return process.env.KIWY_HQ_CREDENTIALS_PATH || path.join(dataDir(), 'credentials.json');
 }
 
 export async function readCredentials(filePath = getCredentialsFilePath()): Promise<CredentialDb> {

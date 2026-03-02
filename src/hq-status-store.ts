@@ -14,8 +14,12 @@ export type HqStatusData = {
 
 const EMPTY_SENTENCE = 'No status yet.';
 
+function dataDir() {
+  return process.env.VERCEL === '1' ? '/tmp/kiwy-data' : path.join(process.cwd(), 'data');
+}
+
 export function getHqStatusFilePath() {
-  return process.env.KIWY_HQ_STATUS_PATH || path.join(process.cwd(), 'data', 'hq-status.json');
+  return process.env.KIWY_HQ_STATUS_PATH || path.join(dataDir(), 'hq-status.json');
 }
 
 function sanitizeSentence(input: unknown): string {
