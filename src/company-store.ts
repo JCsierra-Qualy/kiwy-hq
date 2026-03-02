@@ -1,5 +1,4 @@
-import fs from 'node:fs/promises';
-import path from 'node:path';
+import { kvRead, kvWrite } from './kv';
 
 export type MeetingStatus = 'upcoming' | 'completed' | 'cancelled';
 export type ActionPriority = 'high' | 'medium' | 'low';
@@ -42,13 +41,7 @@ export type CompanyData = {
   updatedAt: string;
 };
 
-function dataDir() {
-  return process.env.VERCEL === '1' ? '/tmp/kiwy-data' : path.join(process.cwd(), 'data');
-}
-
-export function getCompanyFilePath(): string {
-  return process.env.KIWY_HQ_COMPANY_PATH || path.join(dataDir(), 'company.json');
-}
+const KEY = 'kiwy:company';
 
 const EMPTY: CompanyData = {
   meetings: [],
@@ -57,95 +50,69 @@ const EMPTY: CompanyData = {
   updatedAt: new Date(0).toISOString(),
 };
 
-export async function readCompany(filePath = getCompanyFilePath()): Promise<CompanyData> {
-  try {
-    const raw = await fs.readFile(filePath, 'utf8');
-    const p = JSON.parse(raw) as CompanyData;
-    return {
-      meetings: Array.isArray(p.meetings) ? p.meetings : [],
-      actions: Array.isArray(p.actions) ? p.actions : [],
-      suggestions: Array.isArray(p.suggestions) ? p.suggestions : [],
-      updatedAt: typeof p.updatedAt === 'string' ? p.updatedAt : new Date().toISOString(),
-    };
-  } catch (err: unknown) {
-    const code = typeof err === 'object' && err && 'code' in err ? (err as any).code : undefined;
-    if (code !== 'ENOENT') throw err;
-    return { ...EMPTY };
-  }
+export async function readCompany(): Promise<CompanyData> {
+  const data = await kvRead<CompanyData>(KEY);
+  if (!data) return { ...EMPTY };
+  return {
+    meetings: Array.isArray(data.meetings) ? data.meetings : [],
+    actions: Array.isArray(data.actions) ? data.actions : [],
+    suggestions: Array.isArray(data.suggestions) ? data.suggestions : [],
+    updatedAt: typeof data.updatedAt === 'string' ? data.updatedAt : new Date().toISOString(),
+  };
 }
 
-async function persist(data: CompanyData, filePath: string): Promise<void> {
+async function persist(data: CompanyData): Promise<void> {
   data.updatedAt = new Date().toISOString();
-  await fs.mkdir(path.dirname(filePath), { recursive: true });
-  const tmp = `${filePath}.tmp`;
-  await fs.writeFile(tmp, JSON.stringify(data, null, 2) + '\n', { encoding: 'utf8', mode: 0o600 });
-  await fs.rename(tmp, filePath);
+  await kvWrite(KEY, data);
 }
 
-export async function addMeeting(
-  meeting: Omit<Meeting, 'id'>,
-  filePath = getCompanyFilePath(),
-): Promise<CompanyData> {
-  const data = await readCompany(filePath);
+export async function addMeeting(meeting: Omit<Meeting, 'id'>): Promise<CompanyData> {
+  const data = await readCompany();
   data.meetings.push({ id: `m_${Date.now()}`, ...meeting });
-  await persist(data, filePath);
+  await persist(data);
   return data;
 }
 
-export async function deleteMeeting(id: string, filePath = getCompanyFilePath()): Promise<CompanyData> {
-  const data = await readCompany(filePath);
+export async function deleteMeeting(id: string): Promise<CompanyData> {
+  const data = await readCompany();
   data.meetings = data.meetings.filter((m) => m.id !== id);
-  await persist(data, filePath);
+  await persist(data);
   return data;
 }
 
-export async function addAction(
-  action: Omit<Action, 'id' | 'createdAt'>,
-  filePath = getCompanyFilePath(),
-): Promise<CompanyData> {
-  const data = await readCompany(filePath);
+export async function addAction(action: Omit<Action, 'id' | 'createdAt'>): Promise<CompanyData> {
+  const data = await readCompany();
   data.actions.push({ id: `a_${Date.now()}`, ...action, createdAt: new Date().toISOString() });
-  await persist(data, filePath);
+  await persist(data);
   return data;
 }
 
-export async function updateActionStatus(
-  id: string,
-  status: ActionStatus,
-  filePath = getCompanyFilePath(),
-): Promise<CompanyData> {
-  const data = await readCompany(filePath);
+export async function updateActionStatus(id: string, status: ActionStatus): Promise<CompanyData> {
+  const data = await readCompany();
   const a = data.actions.find((x) => x.id === id);
   if (a) a.status = status;
-  await persist(data, filePath);
+  await persist(data);
   return data;
 }
 
-export async function deleteAction(id: string, filePath = getCompanyFilePath()): Promise<CompanyData> {
-  const data = await readCompany(filePath);
+export async function deleteAction(id: string): Promise<CompanyData> {
+  const data = await readCompany();
   data.actions = data.actions.filter((a) => a.id !== id);
-  await persist(data, filePath);
+  await persist(data);
   return data;
 }
 
-export async function addSuggestion(
-  suggestion: Omit<Suggestion, 'id'>,
-  filePath = getCompanyFilePath(),
-): Promise<CompanyData> {
-  const data = await readCompany(filePath);
+export async function addSuggestion(suggestion: Omit<Suggestion, 'id'>): Promise<CompanyData> {
+  const data = await readCompany();
   data.suggestions.push({ id: `s_${Date.now()}`, ...suggestion });
-  await persist(data, filePath);
+  await persist(data);
   return data;
 }
 
-export async function updateSuggestionStatus(
-  id: string,
-  status: SuggestionStatus,
-  filePath = getCompanyFilePath(),
-): Promise<CompanyData> {
-  const data = await readCompany(filePath);
+export async function updateSuggestionStatus(id: string, status: SuggestionStatus): Promise<CompanyData> {
+  const data = await readCompany();
   const s = data.suggestions.find((x) => x.id === id);
   if (s) s.status = status;
-  await persist(data, filePath);
+  await persist(data);
   return data;
 }

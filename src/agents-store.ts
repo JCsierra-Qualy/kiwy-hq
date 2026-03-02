@@ -1,5 +1,4 @@
-import fs from 'node:fs/promises';
-import path from 'node:path';
+import { kvRead, kvWrite } from './kv';
 
 export type AgentStatus = 'active' | 'idle' | 'error' | 'thinking';
 
@@ -78,44 +77,27 @@ const DEFAULT_AGENTS: Agent[] = [
   },
 ];
 
-function dataDir() {
-  return process.env.VERCEL === '1' ? '/tmp/kiwy-data' : path.join(process.cwd(), 'data');
-}
+const KEY = 'kiwy:agents';
 
-export function getAgentsFilePath(): string {
-  return process.env.KIWY_HQ_AGENTS_PATH || path.join(dataDir(), 'agents.json');
-}
-
-export async function readAgents(filePath = getAgentsFilePath()): Promise<AgentsData> {
-  try {
-    const raw = await fs.readFile(filePath, 'utf8');
-    const parsed = JSON.parse(raw) as AgentsData;
-    if (!Array.isArray(parsed.agents)) {
-      return { agents: DEFAULT_AGENTS, updatedAt: new Date().toISOString() };
-    }
-    return parsed;
-  } catch (err: unknown) {
-    const code = typeof err === 'object' && err && 'code' in err ? (err as any).code : undefined;
-    if (code !== 'ENOENT') throw err;
+export async function readAgents(): Promise<AgentsData> {
+  const data = await kvRead<AgentsData>(KEY);
+  if (!data || !Array.isArray(data.agents)) {
     return { agents: DEFAULT_AGENTS, updatedAt: new Date().toISOString() };
   }
+  return data;
 }
 
 export async function writeAgentStatus(
   agentId: string,
   update: Partial<Pick<Agent, 'status' | 'currentTask' | 'progress' | 'metrics' | 'recentActions'>>,
-  filePath = getAgentsFilePath(),
 ): Promise<AgentsData> {
-  const data = await readAgents(filePath);
+  const data = await readAgents();
   const now = new Date().toISOString();
   const idx = data.agents.findIndex((a) => a.id === agentId);
   if (idx !== -1) {
     data.agents[idx] = { ...data.agents[idx], ...update, lastActivity: now };
   }
   data.updatedAt = now;
-  await fs.mkdir(path.dirname(filePath), { recursive: true });
-  const tmp = `${filePath}.tmp`;
-  await fs.writeFile(tmp, JSON.stringify(data, null, 2) + '\n', { encoding: 'utf8', mode: 0o600 });
-  await fs.rename(tmp, filePath);
+  await kvWrite(KEY, data);
   return data;
 }

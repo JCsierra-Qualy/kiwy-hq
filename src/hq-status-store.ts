@@ -1,5 +1,4 @@
-import fs from 'node:fs/promises';
-import path from 'node:path';
+import { kvRead, kvWrite } from './kv';
 
 export type MacroProjectKey = 'qualiver' | 'echo' | 'kuenti' | 'personal';
 
@@ -13,14 +12,7 @@ export type HqStatusData = {
 };
 
 const EMPTY_SENTENCE = 'No status yet.';
-
-function dataDir() {
-  return process.env.VERCEL === '1' ? '/tmp/kiwy-data' : path.join(process.cwd(), 'data');
-}
-
-export function getHqStatusFilePath() {
-  return process.env.KIWY_HQ_STATUS_PATH || path.join(dataDir(), 'hq-status.json');
-}
+const KEY = 'kiwy:hq-status';
 
 function sanitizeSentence(input: unknown): string {
   if (typeof input !== 'string') return EMPTY_SENTENCE;
@@ -29,26 +21,9 @@ function sanitizeSentence(input: unknown): string {
   return s.slice(0, 220);
 }
 
-export async function readHqStatus(filePath = getHqStatusFilePath()): Promise<HqStatusData> {
-  try {
-    const raw = await fs.readFile(filePath, 'utf8');
-    const parsed = JSON.parse(raw) as Record<string, unknown>;
-
-    return {
-      qualiver: sanitizeSentence(parsed.qualiver),
-      echo: sanitizeSentence(parsed.echo),
-      kuenti: sanitizeSentence(parsed.kuenti),
-      personal: sanitizeSentence(parsed.personal),
-      updatedAt: typeof parsed.updatedAt === 'string' ? parsed.updatedAt : new Date(0).toISOString(),
-      fieldUpdatedAt:
-        parsed.fieldUpdatedAt && typeof parsed.fieldUpdatedAt === 'object'
-          ? (parsed.fieldUpdatedAt as Partial<Record<MacroProjectKey, string>>)
-          : {},
-    };
-  } catch (err: unknown) {
-    const code = typeof err === 'object' && err && 'code' in err ? (err as any).code : undefined;
-    if (code !== 'ENOENT') throw err;
-
+export async function readHqStatus(): Promise<HqStatusData> {
+  const data = await kvRead<Record<string, unknown>>(KEY);
+  if (!data) {
     return {
       qualiver: EMPTY_SENTENCE,
       echo: EMPTY_SENTENCE,
@@ -58,13 +33,23 @@ export async function readHqStatus(filePath = getHqStatusFilePath()): Promise<Hq
       fieldUpdatedAt: {},
     };
   }
+  return {
+    qualiver: sanitizeSentence(data.qualiver),
+    echo: sanitizeSentence(data.echo),
+    kuenti: sanitizeSentence(data.kuenti),
+    personal: sanitizeSentence(data.personal),
+    updatedAt: typeof data.updatedAt === 'string' ? data.updatedAt : new Date(0).toISOString(),
+    fieldUpdatedAt:
+      data.fieldUpdatedAt && typeof data.fieldUpdatedAt === 'object'
+        ? (data.fieldUpdatedAt as Partial<Record<MacroProjectKey, string>>)
+        : {},
+  };
 }
 
 export async function writeHqStatus(
   update: Partial<Record<MacroProjectKey, string>>,
-  filePath = getHqStatusFilePath(),
 ): Promise<HqStatusData> {
-  const existing = await readHqStatus(filePath);
+  const existing = await readHqStatus();
   const now = new Date().toISOString();
 
   const next: HqStatusData = {
@@ -79,16 +64,6 @@ export async function writeHqStatus(
     next.fieldUpdatedAt![k] = now;
   });
 
-  await fs.mkdir(path.dirname(filePath), { recursive: true });
-  const tmpPath = `${filePath}.tmp`;
-  await fs.writeFile(tmpPath, JSON.stringify(next, null, 2) + '\n', { encoding: 'utf8', mode: 0o600 });
-  await fs.rename(tmpPath, filePath);
-
-  try {
-    await fs.chmod(filePath, 0o600);
-  } catch {
-    // ignore on unsupported fs
-  }
-
+  await kvWrite(KEY, next);
   return next;
 }

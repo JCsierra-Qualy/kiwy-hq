@@ -16,6 +16,7 @@
   "private": "true",
   "type": "commonjs",
   "dependencies": {
+    "@upstash/redis": "^1.36.3",
     "cookie-parser": "^1.4.7",
     "express": "^5.2.1"
   },

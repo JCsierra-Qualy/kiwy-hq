@@ -1,5 +1,4 @@
-import fs from 'node:fs/promises';
-import path from 'node:path';
+import { kvRead, kvWrite } from './kv';
 
 export type DailyCost = {
   date: string; // YYYY-MM-DD
@@ -32,36 +31,21 @@ const DEFAULT_CONFIG: CostsConfig = {
   dailyTokenWarning: 80000,
 };
 
-function dataDir() {
-  return process.env.VERCEL === '1' ? '/tmp/kiwy-data' : path.join(process.cwd(), 'data');
+const KEY = 'kiwy:costs';
+
+export async function readCosts(): Promise<CostsData> {
+  const data = await kvRead<CostsData>(KEY);
+  if (!data) return { daily: [], config: { ...DEFAULT_CONFIG }, updatedAt: new Date(0).toISOString() };
+  return {
+    daily: Array.isArray(data.daily) ? data.daily : [],
+    config: { ...DEFAULT_CONFIG, ...(data.config ?? {}) },
+    updatedAt: data.updatedAt ?? new Date().toISOString(),
+  };
 }
 
-export function getCostsFilePath(): string {
-  return process.env.KIWY_HQ_COSTS_PATH || path.join(dataDir(), 'costs.json');
-}
-
-export async function readCosts(filePath = getCostsFilePath()): Promise<CostsData> {
-  try {
-    const raw = await fs.readFile(filePath, 'utf8');
-    const p = JSON.parse(raw) as CostsData;
-    return {
-      daily: Array.isArray(p.daily) ? p.daily : [],
-      config: { ...DEFAULT_CONFIG, ...(p.config ?? {}) },
-      updatedAt: p.updatedAt ?? new Date().toISOString(),
-    };
-  } catch (err: unknown) {
-    const code = typeof err === 'object' && err && 'code' in err ? (err as any).code : undefined;
-    if (code !== 'ENOENT') throw err;
-    return { daily: [], config: { ...DEFAULT_CONFIG }, updatedAt: new Date(0).toISOString() };
-  }
-}
-
-async function persist(data: CostsData, filePath: string): Promise<void> {
+async function persist(data: CostsData): Promise<void> {
   data.updatedAt = new Date().toISOString();
-  await fs.mkdir(path.dirname(filePath), { recursive: true });
-  const tmp = `${filePath}.tmp`;
-  await fs.writeFile(tmp, JSON.stringify(data, null, 2) + '\n', { encoding: 'utf8', mode: 0o600 });
-  await fs.rename(tmp, filePath);
+  await kvWrite(KEY, data);
 }
 
 export function calcCost(inputTokens: number, outputTokens: number, config: CostsConfig): number {
@@ -71,26 +55,22 @@ export function calcCost(inputTokens: number, outputTokens: number, config: Cost
 
 export async function upsertDailyCost(
   entry: Omit<DailyCost, 'costUsd'> & { costUsd?: number },
-  filePath = getCostsFilePath(),
 ): Promise<CostsData> {
-  const data = await readCosts(filePath);
+  const data = await readCosts();
   const cost = entry.costUsd ?? calcCost(entry.inputTokens, entry.outputTokens, data.config);
   const idx = data.daily.findIndex((d) => d.date === entry.date);
   const record: DailyCost = { ...entry, costUsd: cost };
   if (idx !== -1) data.daily[idx] = record;
   else data.daily.push(record);
   data.daily.sort((a, b) => b.date.localeCompare(a.date));
-  await persist(data, filePath);
+  await persist(data);
   return data;
 }
 
-export async function updateCostsConfig(
-  update: Partial<CostsConfig>,
-  filePath = getCostsFilePath(),
-): Promise<CostsData> {
-  const data = await readCosts(filePath);
+export async function updateCostsConfig(update: Partial<CostsConfig>): Promise<CostsData> {
+  const data = await readCosts();
   data.config = { ...data.config, ...update };
-  await persist(data, filePath);
+  await persist(data);
   return data;
 }
 

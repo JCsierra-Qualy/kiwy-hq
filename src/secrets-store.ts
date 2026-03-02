@@ -1,5 +1,4 @@
-import fs from 'node:fs/promises';
-import path from 'node:path';
+import { kvRead, kvWrite } from './kv';
 
 export type SecretsField =
   | 'appsheetKey'
@@ -31,13 +30,7 @@ export type StoredSecrets = {
   fieldUpdatedAt?: Partial<Record<SecretsField, string>>;
 };
 
-function dataDir() {
-  return process.env.VERCEL === '1' ? '/tmp/kiwy-data' : path.join(process.cwd(), 'data');
-}
-
-export function getSecretsFilePath() {
-  return process.env.KIWY_HQ_SECRETS_PATH || path.join(dataDir(), 'secrets.json');
-}
+const KEY = 'kiwy:secrets';
 
 function isStringRecord(v: unknown): v is Record<string, string> {
   if (!v || typeof v !== 'object') return false;
@@ -47,75 +40,55 @@ function isStringRecord(v: unknown): v is Record<string, string> {
   return true;
 }
 
-export async function readSecrets(filePath = getSecretsFilePath()): Promise<StoredSecrets | null> {
-  try {
-    const raw = await fs.readFile(filePath, 'utf8');
-    const parsed = JSON.parse(raw) as unknown;
-    if (!parsed || typeof parsed !== 'object') return null;
+export async function readSecrets(): Promise<StoredSecrets | null> {
+  const raw = await kvRead<Record<string, unknown>>(KEY);
+  if (!raw || typeof raw !== 'object') return null;
 
-    const obj = parsed as Record<string, unknown>;
-    const stored: StoredSecrets = {
-      updatedAt: typeof obj.updatedAt === 'string' ? obj.updatedAt : new Date(0).toISOString(),
-    };
+  const stored: StoredSecrets = {
+    updatedAt: typeof raw.updatedAt === 'string' ? raw.updatedAt : new Date(0).toISOString(),
+  };
 
-    if (typeof obj.appsheetKey === 'string') stored.appsheetKey = obj.appsheetKey;
-    if (typeof obj.appsheetCrmKey === 'string') stored.appsheetCrmKey = obj.appsheetCrmKey;
-    if (typeof obj.appsheetOpsKey === 'string') stored.appsheetOpsKey = obj.appsheetOpsKey;
-    if (typeof obj.appsheetAppId === 'string') stored.appsheetAppId = obj.appsheetAppId;
-    if (typeof obj.appsheetRegion === 'string') stored.appsheetRegion = obj.appsheetRegion;
+  if (typeof raw.appsheetKey === 'string') stored.appsheetKey = raw.appsheetKey;
+  if (typeof raw.appsheetCrmKey === 'string') stored.appsheetCrmKey = raw.appsheetCrmKey;
+  if (typeof raw.appsheetOpsKey === 'string') stored.appsheetOpsKey = raw.appsheetOpsKey;
+  if (typeof raw.appsheetAppId === 'string') stored.appsheetAppId = raw.appsheetAppId;
+  if (typeof raw.appsheetRegion === 'string') stored.appsheetRegion = raw.appsheetRegion;
+  if (typeof raw.n8nKey === 'string') stored.n8nKey = raw.n8nKey;
+  if (typeof raw.githubPat === 'string') stored.githubPat = raw.githubPat;
 
-    if (typeof obj.n8nKey === 'string') stored.n8nKey = obj.n8nKey;
-
-    if (typeof obj.githubPat === 'string') stored.githubPat = obj.githubPat;
-
-    if (isStringRecord(obj.fieldUpdatedAt)) {
-      stored.fieldUpdatedAt = obj.fieldUpdatedAt as any;
-    }
-
-    return stored;
-  } catch (err: unknown) {
-    const code = typeof err === 'object' && err && 'code' in err ? (err as any).code : undefined;
-    if (code === 'ENOENT') return null;
-    throw err;
+  if (isStringRecord(raw.fieldUpdatedAt)) {
+    stored.fieldUpdatedAt = raw.fieldUpdatedAt as any;
   }
+
+  return stored;
 }
 
 type SecretsUpdate = Partial<Record<SecretsField, string | null>>;
 
-export async function writeSecrets(update: SecretsUpdate, filePath = getSecretsFilePath()) {
-  const existing = (await readSecrets(filePath)) || { updatedAt: new Date(0).toISOString() };
+export async function writeSecrets(update: SecretsUpdate): Promise<StoredSecrets> {
+  const existing = (await readSecrets()) || { updatedAt: new Date(0).toISOString() };
   const now = new Date().toISOString();
 
   const next: StoredSecrets = {
     updatedAt: now,
     fieldUpdatedAt: { ...(existing.fieldUpdatedAt || {}) },
-
-    // AppSheet
     appsheetKey: existing.appsheetKey,
     appsheetCrmKey: existing.appsheetCrmKey,
     appsheetOpsKey: existing.appsheetOpsKey,
     appsheetAppId: existing.appsheetAppId,
     appsheetRegion: existing.appsheetRegion,
-
-    // n8n
     n8nKey: existing.n8nKey,
-
-    // GitHub
     githubPat: existing.githubPat,
   };
 
   const apply = (field: SecretsField) => {
     if (!(field in update)) return;
     const val = update[field];
-
     if (typeof val === 'string') {
-      // Set/update
       (next as any)[field] = val;
       next.fieldUpdatedAt![field] = now;
       return;
     }
-
-    // Explicit clear
     if (val === null) {
       delete (next as any)[field];
       next.fieldUpdatedAt![field] = now;
@@ -130,21 +103,7 @@ export async function writeSecrets(update: SecretsUpdate, filePath = getSecretsF
   apply('n8nKey');
   apply('githubPat');
 
-  await fs.mkdir(path.dirname(filePath), { recursive: true });
-
-  const tmpPath = `${filePath}.tmp`;
-  await fs.writeFile(tmpPath, JSON.stringify(next, null, 2) + '\n', {
-    encoding: 'utf8',
-    mode: 0o600,
-  });
-  await fs.rename(tmpPath, filePath);
-
-  try {
-    await fs.chmod(filePath, 0o600);
-  } catch {
-    // ignore (best-effort)
-  }
-
+  await kvWrite(KEY, next);
   return next;
 }
 
@@ -152,6 +111,5 @@ export function maskSecret(value: string | undefined) {
   if (!value) return '';
   const trimmed = value.trim();
   if (!trimmed) return '';
-  // Always first4...last4 (best-effort for short strings)
   return `${trimmed.slice(0, 4)}...${trimmed.slice(-4)}`;
 }

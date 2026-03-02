@@ -1,5 +1,4 @@
-import fs from 'node:fs/promises';
-import path from 'node:path';
+import { kvRead, kvWrite } from './kv';
 import { readSecrets } from './secrets-store';
 
 export type CredentialItem = {
@@ -15,53 +14,37 @@ type CredentialDb = {
   items: CredentialItem[];
 };
 
-function dataDir() {
-  return process.env.VERCEL === '1' ? '/tmp/kiwy-data' : path.join(process.cwd(), 'data');
-}
+const KEY = 'kiwy:credentials';
 
-export function getCredentialsFilePath() {
-  return process.env.KIWY_HQ_CREDENTIALS_PATH || path.join(dataDir(), 'credentials.json');
-}
-
-export async function readCredentials(filePath = getCredentialsFilePath()): Promise<CredentialDb> {
-  try {
-    const raw = await fs.readFile(filePath, 'utf8');
-    const parsed = JSON.parse(raw) as CredentialDb;
-    if (!parsed || typeof parsed !== 'object' || !Array.isArray(parsed.items)) {
-      return { updatedAt: new Date(0).toISOString(), items: [] };
-    }
-    return parsed;
-  } catch (err: any) {
-    if (err?.code === 'ENOENT') return { updatedAt: new Date(0).toISOString(), items: [] };
-    throw err;
+export async function readCredentials(): Promise<CredentialDb> {
+  const data = await kvRead<CredentialDb>(KEY);
+  if (!data || !Array.isArray(data.items)) {
+    return { updatedAt: new Date(0).toISOString(), items: [] };
   }
+  return data;
 }
 
-async function writeDb(db: CredentialDb, filePath = getCredentialsFilePath()) {
-  await fs.mkdir(path.dirname(filePath), { recursive: true });
-  const tmp = `${filePath}.tmp`;
-  await fs.writeFile(tmp, JSON.stringify(db, null, 2) + '\n', { encoding: 'utf8', mode: 0o600 });
-  await fs.rename(tmp, filePath);
-  try { await fs.chmod(filePath, 0o600); } catch {}
+async function writeDb(db: CredentialDb): Promise<void> {
+  await kvWrite(KEY, db);
 }
 
-export async function upsertCredential(input: Omit<CredentialItem, 'updatedAt'>, filePath = getCredentialsFilePath()) {
-  const db = await readCredentials(filePath);
+export async function upsertCredential(input: Omit<CredentialItem, 'updatedAt'>): Promise<CredentialDb> {
+  const db = await readCredentials();
   const now = new Date().toISOString();
   const idx = db.items.findIndex((x) => x.key === input.key);
   const nextItem: CredentialItem = { ...input, updatedAt: now };
   if (idx >= 0) db.items[idx] = nextItem;
   else db.items.push(nextItem);
   db.updatedAt = now;
-  await writeDb(db, filePath);
+  await writeDb(db);
   return db;
 }
 
-export async function clearCredential(key: string, filePath = getCredentialsFilePath()) {
-  const db = await readCredentials(filePath);
+export async function clearCredential(key: string): Promise<CredentialDb> {
+  const db = await readCredentials();
   db.items = db.items.filter((x) => x.key !== key);
   db.updatedAt = new Date().toISOString();
-  await writeDb(db, filePath);
+  await writeDb(db);
   return db;
 }
 
@@ -75,7 +58,7 @@ const ENV_CANDIDATES = [
   'ANTHROPIC_API_KEY',
 ];
 
-export async function importKnownCredentials(filePath = getCredentialsFilePath()) {
+export async function importKnownCredentials(): Promise<CredentialDb> {
   const legacy = await readSecrets();
 
   const discovered: Array<Omit<CredentialItem, 'updatedAt'>> = [];
@@ -97,9 +80,9 @@ export async function importKnownCredentials(filePath = getCredentialsFilePath()
     push(`env.${envName.toLowerCase()}`, envName, process.env[envName], 'env');
   }
 
-  let db = await readCredentials(filePath);
+  let db = await readCredentials();
   for (const item of discovered) {
-    db = await upsertCredential(item, filePath);
+    db = await upsertCredential(item);
   }
   return db;
 }
