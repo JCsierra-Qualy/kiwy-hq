@@ -24,7 +24,7 @@ export type CostsData = {
 };
 
 const DEFAULT_CONFIG: CostsConfig = {
-  model: 'claude-sonnet-4-6',
+  model: 'openai-codex/gpt-5.3-codex',
   inputPricePerMTok: 3.0,
   outputPricePerMTok: 15.0,
   monthlyBudgetUsd: 50,
@@ -60,8 +60,19 @@ export async function upsertDailyCost(
   const cost = entry.costUsd ?? calcCost(entry.inputTokens, entry.outputTokens, data.config);
   const idx = data.daily.findIndex((d) => d.date === entry.date);
   const record: DailyCost = { ...entry, costUsd: cost };
-  if (idx !== -1) data.daily[idx] = record;
-  else data.daily.push(record);
+  if (idx !== -1) {
+    const prev = data.daily[idx];
+    data.daily[idx] = {
+      date: entry.date,
+      inputTokens: (prev.inputTokens || 0) + (entry.inputTokens || 0),
+      outputTokens: (prev.outputTokens || 0) + (entry.outputTokens || 0),
+      totalTokens: (prev.totalTokens || 0) + (entry.totalTokens || 0),
+      costUsd: (prev.costUsd || 0) + cost,
+      model: entry.model || prev.model,
+    };
+  } else {
+    data.daily.push(record);
+  }
   data.daily.sort((a, b) => b.date.localeCompare(a.date));
   await persist(data);
   return data;
